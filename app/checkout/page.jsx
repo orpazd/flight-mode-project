@@ -4,6 +4,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Navbar from '../components/Navbar'; // ייבוא ה-Navbar החדש
+import Footer from '../components/Footer'; // ייבוא הפוטר החדש
 import '../globals.css';
 
 export default function CheckoutPage() {
@@ -143,5 +144,10 @@ const handleSubmit = (e) => {
         <div className="rights" style={{ textAlign: 'center', padding: '20px 0' }}>כל הזכויות שמורות - אורפז דוד © 2024</div>
       </div>
     </div>
+
+
+
   );
+
 }
+

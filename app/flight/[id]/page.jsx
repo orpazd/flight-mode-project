@@ -181,3 +181,4 @@ export default function FlightPage({ params }) {
     </div>
   );
 }
+

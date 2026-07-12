@@ -1,9 +1,9 @@
-// app/cart/page.jsx
 "use client";
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Navbar from '../components/Navbar'; // ייבוא ה-Navbar החדש
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer'; // ייבוא הפוטר החדש
 import '../globals.css';
 
 export default function CartPage() {
@@ -18,15 +18,12 @@ export default function CartPage() {
     const updatedCart = cartItems.filter(item => item.id !== id);
     setCartItems(updatedCart);
     localStorage.setItem('cart', JSON.stringify(updatedCart));
-    
-    // שורה קריטית: מעדכנת את המונה ב-Navbar מיד לאחר המחיקה
     window.dispatchEvent(new Event('storage'));
   };
 
   return (
     <div id="box" style={{ direction: 'ltr', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       
-      {/* שימוש ב-Navbar החדש והדינמי */}
       <Navbar />
 
       <div style={{ padding: '40px 20px', maxWidth: '800px', margin: '0 auto', flex: 1, width: '100%', fontFamily: 'sans-serif', textAlign: 'left' }}>
@@ -65,9 +62,8 @@ export default function CartPage() {
         )}
       </div>
 
-      <div id="FOOTER" style={{ marginTop: 'auto' }}>
-        <div className="rights" style={{ textAlign: 'center', padding: '20px 0' }}>כל הזכויות שמורות - אורפז דוד © 2024</div>
-      </div>
+      {/* הוספת הפוטר בסוף הדף */}
+      <Footer />
     </div>
   );
 }
