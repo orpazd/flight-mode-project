@@ -36,14 +36,28 @@ export default function CheckoutPage() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setIsSubmitted(true);
-    localStorage.removeItem('cart');
-    // טריגר לעדכון ה-Navbar במקרה שהמשתמש יחזור לדפים אחרים
-    window.dispatchEvent(new Event('storage')); 
+// במקום רק למחוק, נשמור את ההזמנה בהיסטוריה
+const handleSubmit = (e) => {
+  e.preventDefault();
+  
+  // 1. קבלת הזמנות קיימות
+  const existingBookings = JSON.parse(localStorage.getItem('myBookings')) || [];
+  
+  // 2. הוספת ההזמנה הנוכחית (עם תאריך)
+  const newBooking = {
+    items: cartItems,
+    date: new Date().toLocaleDateString(),
+    id: Date.now()
   };
-
+  
+  // 3. שמירה חזרה
+  localStorage.setItem('myBookings', JSON.stringify([...existingBookings, newBooking]));
+  
+  // 4. ניקוי הסל
+  localStorage.removeItem('cart');
+  setIsSubmitted(true);
+  window.dispatchEvent(new Event('storage'));
+};
   if (isSubmitted) {
     return (
       <div style={{ textAlign: 'center', padding: '100px 20px', fontFamily: 'sans-serif', direction: 'ltr' }}>

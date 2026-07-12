@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Navbar from '../components/Navbar'; // ייבוא ה-Navbar
+import Navbar from '../components/Navbar';
 import '../globals.css';
 
 export default function FavouritesPage() {
@@ -18,18 +18,27 @@ export default function FavouritesPage() {
     const updatedFavs = favItems.filter(item => item.id !== id);
     setFavItems(updatedFavs);
     localStorage.setItem('favourites', JSON.stringify(updatedFavs));
-    
-    // טריגר לעדכון ה-Navbar במקרה שהמשתמש יחזור לדפים אחרים
     window.dispatchEvent(new Event('storage'));
+  };
+
+  // פונקציה להוספה לסל
+  const addToCart = (item) => {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    // בדיקה אם הפריט כבר קיים בסל כדי למנוע כפילויות
+    if (!cart.find(c => c.id === item.id)) {
+      cart.push(item);
+      localStorage.setItem('cart', JSON.stringify(cart));
+      window.dispatchEvent(new Event('storage')); // מעדכן את המונה ב-Navbar
+      alert("Added to cart!");
+    } else {
+      alert("This item is already in your cart.");
+    }
   };
 
   return (
     <div id="box" style={{ direction: 'ltr', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      
-      {/* החלפת התפריט הישן ב-Navbar החדש */}
       <Navbar />
 
-      {/* תוכן המועדפים */}
       <div style={{ padding: '40px 20px', maxWidth: '800px', margin: '0 auto', flex: 1, width: '100%', fontFamily: 'sans-serif', textAlign: 'left' }}>
         <h1 style={{ color: '#c0392b', borderBottom: '2px solid #eee', paddingBottom: '10px' }}>Your Favorites ❤️</h1>
         
@@ -47,9 +56,12 @@ export default function FavouritesPage() {
                   <p style={{ margin: '0', color: '#7f8c8d', fontSize: '14px' }}>Airline: {item.Airline} | Price: {item.price}</p>
                 </div>
                 <div style={{ display: 'flex', gap: '10px' }}>
-                  <Link href={`/flight/${item.id}`} style={{ background: '#3498db', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '5px', textDecoration: 'none', fontSize: '14px', fontWeight: 'bold' }}>
-                    View Deal
-                  </Link>
+                  {/* כפתור הוספה לסל */}
+                  <button 
+                    onClick={() => addToCart(item)} 
+                    style={{ background: '#27ae60', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '5px', cursor: 'pointer', fontSize: '14px', fontWeight: 'bold' }}>
+                    Add to Cart 🛒
+                  </button>
                   <button onClick={() => removeFromFavs(item.id)} style={{ background: '#e74c3c', color: 'white', border: 'none', padding: '8px 12px', borderRadius: '5px', cursor: 'pointer', fontSize: '14px' }}>
                     Remove
                   </button>
@@ -66,5 +78,3 @@ export default function FavouritesPage() {
     </div>
   );
 }
-
-//dd

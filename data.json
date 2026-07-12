@@ -1,0 +1,6 @@
+{
+  "flights": [
+    { "id": 1, "to": "Paris", "price": "$500", "Airline": "Air France" },
+    { "id": 2, "to": "London", "price": "$400", "Airline": "British Airways" }
+  ]
+}

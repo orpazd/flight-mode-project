@@ -7,12 +7,15 @@ import Link from 'next/link';
 export default function Navbar() {
   const [cartCount, setCartCount] = useState(0);
   const [favCount, setFavCount] = useState(0);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const updateCounts = () => {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
     const favs = JSON.parse(localStorage.getItem('favourites')) || [];
     setCartCount(cart.length);
     setFavCount(favs.length);
+    // בדיקה אם המשתמש מחובר
+    setIsLoggedIn(localStorage.getItem('isLoggedIn') === 'true');
   };
 
   useEffect(() => {
@@ -21,13 +24,29 @@ export default function Navbar() {
     return () => window.removeEventListener('storage', updateCounts);
   }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem('isLoggedIn');
+    setIsLoggedIn(false);
+    window.location.reload(); // רענון כדי לעדכן את ה-Navbar
+  };
+
   return (
     <div className="menu">
       <Link href="/"><img src="/image/לוגויים/logo.png" className="logo" alt="logo" /></Link>
       <div className="options">
         <Link href="#" className="button">מבצעי דקה 90</Link>
-        <Link href="#" className="button">חבילות נופש</Link>
         <Link href="/flights" className="button">טיסות</Link>
+        
+        {/* הלינקים החדשים */}
+        {isLoggedIn ? (
+          <>
+            <Link href="/my-bookings" className="button">ההזמנות שלי</Link>
+            <button onClick={handleLogout} className="button" style={{ cursor: 'pointer' }}>התנתק</button>
+          </>
+        ) : (
+          <Link href="/login" className="button">התחברות</Link>
+        )}
+
         <Link href="/cart" className="basket" style={{ position: 'relative' }}>
           <img src="/fav.icon/icons8-shopping-cart-50.png" alt="cart" />
           {cartCount > 0 && <span style={badgeStyle}>{cartCount}</span>}
