@@ -93,14 +93,17 @@ a {
 /* ==========================================
    🖼️ גלריית תמונות (Photos Section)
    ========================================== */
-.Photos {
+.photos {
     display: flex;
+    flex-wrap: wrap;
     margin-top: 1%;
     margin-bottom: 3%;
-    gap: 0.5%;
+    gap: 5%;
+
 }
 
 .Photo {
+    padding: 15px;
     width: 20%;
     height: 180px;
 }
@@ -382,7 +385,7 @@ a {
     .button { font-size: 16px; width: 80%; }
     .logo { width: 50%; height: 100px; }
 
-    .Photos {
+    .photos {
         display: flex;
         width: 100%;
         margin-left: 3%;
@@ -482,7 +485,7 @@ a {
     .Search, .button { width: 80%; }
     .button { text-align: center; }
 
-    .Photos { width: 90%; gap: 0.5%; }
+    .photos { width: 90%; gap: 0.5%; }
     .london, .rome, .new-york, .paris, .australia { width: 22%; height: 140px; }
 
     .Berlin, .Barcelona, .Warsaw { margin-top: 58%; }
