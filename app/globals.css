@@ -20,9 +20,7 @@ body {
     font-style: italic;
     max-width: 100%; /* מתוקן מ-900% ל-100% כדי למנוע עיוותי מסך */
     height: auto;    /* מתוקן לגובה גמיש במקום גובה קבוע של 2200px */
-    min-height: 1900px;
-    padding: 1%;
-    width: 100%;
+
 }
 
 #main {
@@ -98,14 +96,22 @@ a {
     flex-wrap: wrap;
     margin-top: 1%;
     margin-bottom: 3%;
-    gap: 5%;
+    gap: 5px;
+    width: 70%;
+    justify-content: center;
 
 }
 
 .Photo {
     padding: 15px;
-    width: 20%;
-    height: 180px;
+    width: 20rem;
+    height: 10rem;
+}
+
+#header{
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
 
 /* ==========================================
@@ -385,12 +391,7 @@ a {
     .button { font-size: 16px; width: 80%; }
     .logo { width: 50%; height: 100px; }
 
-    .photos {
-        display: flex;
-        width: 100%;
-        margin-left: 3%;
-        gap: 0.5%;
-    }
+
     
     .london, .rome, .new-york, .paris, .australia {
         width: 20%;
@@ -485,7 +486,6 @@ a {
     .Search, .button { width: 80%; }
     .button { text-align: center; }
 
-    .photos { width: 90%; gap: 0.5%; }
     .london, .rome, .new-york, .paris, .australia { width: 22%; height: 140px; }
 
     .Berlin, .Barcelona, .Warsaw { margin-top: 58%; }

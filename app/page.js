@@ -54,7 +54,7 @@ export default function Home() {
       </div>
 
       {/* Header Photos */}
-      <div id="HEADER">
+      <div id="header">
         <div className="photos">
           <img src="/image/display-line/paris2.jpg" className="Photo" alt="Paris" />
           <img src="/image/display-line/rome.jpg" className="Photo" alt="Rome" />
