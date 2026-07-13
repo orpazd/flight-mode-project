@@ -56,11 +56,11 @@ export default function Home() {
       {/* Header Photos */}
       <div id="HEADER">
         <div className="Photos">
-          <img src="/image/שורת תצוגה/paris2.jpg" className="Photo" alt="Paris" />
-          <img src="/image/שורת תצוגה/rome.jpg" className="Photo" alt="Rome" />
-          <img src="/image/שורת תצוגה/new york.jpg" className="Photo" alt="New York" />
-          <img src="/image/שורת תצוגה/london.jpeg" className="Photo" alt="London" />
-          <img src="/image/שורת תצוגה/australia.jpg" className="Photo" alt="Australia" />
+          <img src="/image/display-line/paris2.jpg" className="Photo" alt="Paris" />
+          <img src="/image/display-line/rome.jpg" className="Photo" alt="Rome" />
+          <img src="/image/display-line/new-york.png" className="Photo" alt="New York" />
+          <img src="/image/display-line/london.jpeg" className="Photo" alt="London" />
+          <img src="/image/display-line/australia.png" className="Photo" alt="Australia" />
         </div>
       </div>
 
