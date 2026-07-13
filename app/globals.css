@@ -2,12 +2,17 @@
    🎯 הגדרות גלובליות ובסיס האתר (Base & Layout)
    ========================================== */
 body {
-    background-image: url(/image/לוגויים/skay2.jpg);
+    background-image: url(/image/logos/skay2.jpg);
     background-size: cover;
     background-attachment: fixed;
     display: flex;
     flex-direction: row;
     margin: 0;
+}
+.layer1{
+    background: rgba(0, 0, 0, 0.2);
+    width: 100%;
+
 }
 
 #box {

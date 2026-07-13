@@ -24,16 +24,16 @@ export default function Footer() {
           <div className="Phone">
             <div className="Phone1">
               <div className="WhatsApp">052-7810701</div>
-              <img src="/image/לוגויים/WhatsApp-Photoroom.png" className="logo-whatsapp" alt="" />
+              <img src="/image/logos/WhatsApp-Photoroom.png" className="logo-whatsapp" alt="" />
             </div>
             <div className="Phone2">
               <div className="Phone-Number">09-8821601</div>
-              <img src="/image/לוגויים/Phone-Photoroom.png" className="logo-phone" alt="" />
+              <img src="/image/logos/Phone-Photoroom.png" className="logo-phone" alt="" />
             </div>
           </div>
           <div className="email">
             <a href="mailto:Flightmode@gmail.co.il" className="mail">Flightmode@gmail.co.il</a>
-            <img src="/image/לוגויים/mail.png" className="logo-mail" alt="" />
+            <img src="/image/logos/mail.png" className="logo-mail" alt="" />
           </div>
           <div className="Address">משרדינו ממוקמים ברחוב מנחם בגין 7 רמת גן</div>
         </div>

@@ -32,7 +32,7 @@ export default function Navbar() {
 
   return (
     <div className="menu">
-      <Link href="/"><img src="/image/לוגויים/logo.png" className="logo" alt="logo" /></Link>
+      <Link href="/"><img src="/image/logos/logo.png" className="logo" alt="logo" /></Link>
       <div className="options">
         <Link href="#" className="button">מבצעי דקה 90</Link>
         <Link href="/flights" className="button">טיסות</Link>
@@ -52,7 +52,7 @@ export default function Navbar() {
           {cartCount > 0 && <span style={badgeStyle}>{cartCount}</span>}
         </Link>
         <Link href="/favourites" className="favourites" style={{ position: 'relative' }}>
-          <img src="/image/לוגויים/icons8-heart-50.png" alt="heart" />
+          <img src="/image/logos/icons8-heart-50.png" alt="heart" />
           {favCount > 0 && <span style={badgeStyle}>{favCount}</span>}
         </Link>
       </div>

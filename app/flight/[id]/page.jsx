@@ -71,7 +71,7 @@ export default function FlightPage({ params }) {
       {/* --- ה-Navbar המקורי שלך --- */}
       <div className="menu">
         <Link href="/">
-          <img src="/image/לוגויים/logo.png" className="logo" alt="logo" />
+          <img src="/image/logos/logo.png" className="logo" alt="logo" />
         </Link>
 
         <div className="options">
@@ -88,7 +88,7 @@ export default function FlightPage({ params }) {
           </Link>
 
           <Link href="/favourites" className="favourites">
-            <img src="/image/לוגויים/icons8-heart-50.png" alt="heart" />
+            <img src="/image/logos/icons8-heart-50.png" alt="heart" />
           </Link>
         </div>
       </div>
@@ -120,7 +120,7 @@ export default function FlightPage({ params }) {
 
               {/* חיבור אירוע הלחיצה לפונקציית המועדפים */}
               <button onClick={addToFavourites} style={{ background: '#e74c3c', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '5px', fontSize: '16px', cursor: 'pointer', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                <img src="/image/לוגויים/icons8-heart-50.png" alt="heart" style={{ width: '18px', filter: 'brightness(0) invert(1)' }} />
+                <img src="/image/logos/icons8-heart-50.png" alt="heart" style={{ width: '18px', filter: 'brightness(0) invert(1)' }} />
                 Favorite
               </button>
             </div>
@@ -152,16 +152,16 @@ export default function FlightPage({ params }) {
             <div className="Phone">
               <div className="Phone1">
                 <div className="WhatsApp">052-7810701</div>
-                <img src="/image/לוגויים/WhatsApp-Photoroom.png" className="logo-whatsapp" alt="WhatsApp" />
+                <img src="/image/logos/WhatsApp-Photoroom.png" className="logo-whatsapp" alt="WhatsApp" />
               </div>
               <div className="Phone2">
                 <div className="Phone-Number">09-8821601</div>
-                <img src="/image/לוגויים/Phone-Photoroom.png" className="logo-phone" alt="Phone" />
+                <img src="/image/logos/Phone-Photoroom.png" className="logo-phone" alt="Phone" />
               </div>
             </div>
             <div className="email">
               <a href="mailto:Flightmode@gmail.co.il" className="mail">Flightmode@gmail.co.il</a>
-              <img src="/image/לוגויים/mail.png" className="logo-mail" alt="Mail" />
+              <img src="/image/logos/mail.png" className="logo-mail" alt="Mail" />
             </div>
             <div className="Address">משרדינו ממוקמים ברחוב מנחם בגין 7 רמת גן</div>
           </div>

@@ -35,7 +35,7 @@ export default function Home() {
 
   return (
     <div id="box">
-      
+
       {/* 2. במקום התפריט הישן, אנחנו משתמשים ב-Navbar החדש.
           הוספתי כאן גם את תיבת החיפוש בתוך ה-Navbar כדי שלא תאבדי אותה */}
       <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -69,14 +69,18 @@ export default function Home() {
         <div className="title">מבצעי דקה 90</div>
         <div className="the-flights">
           {saleFlights.map((flight) => (
-            <Link href={`/flight/${flight.id}`} className="flight" key={flight.id}>
-              <div className="text">
-                <h1 className="where">{flight.to}</h1>
-                <p className="Airline">חברת תעופה: {flight.Airline}</p>
-                <p className="time">שעות: {flight.time}</p>
-                <p className="price" style={{ color: '#e74c3c' }}>{flight.price}</p>
+
+              <div style={{display:"flex", justifyContent: "center", alignItems: "center"}}>
+                <Link href={`/flight/${flight.id}`} className="flight" key={flight.id}>
+                  <div className="text">
+                    <h1 className="where">{flight.to}</h1>
+                    <p className="Airline">חברת תעופה: {flight.Airline}</p>
+                    <p className="time">שעות: {flight.time}</p>
+                    <p className="price" style={{ color: '#e74c3c' }}>{flight.price}</p>
+                  </div>
+                </Link>
               </div>
-            </Link>
+
           ))}
         </div>
 
