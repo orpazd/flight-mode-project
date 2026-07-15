@@ -1,51 +1,51 @@
 "use client";
 
-import { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
+import { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
-import data from '../../data.json'; // כאן אנחנו מחברים את הקובץ שיצרת
+import Footer from '../components/Footer';
 
-function FlightsContent() {
-  const searchParams = useSearchParams();
-  const [searchTerm, setSearchTerm] = useState("");
-  // במקום רשימה ארוכה בקוד, אנחנו מושכים מהקובץ data.json
-  const [flights] = useState(data.flights); 
+export default function FlightsPage() {
+  const [flights, setFlights] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const query = searchParams.get('search');
-    if (query) setSearchTerm(query);
-  }, [searchParams]);
-
-  const filteredFlights = flights.filter(flight => 
-    flight.to.includes(searchTerm)
-  );
+    // הבאת הנתונים מה-API שיצרנו ב-app/api/flights/route.js
+    fetch('/api/flights')
+      .then((res) => res.json())
+      .then((data) => {
+        setFlights(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error fetching flights:", err);
+        setLoading(false);
+      });
+  }, []);
 
   return (
-    <div id="box">
+    <div id="box" style={{ direction: 'ltr', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Navbar />
-      <div id="main">
-        <div className="the-flights">
-          {filteredFlights.map((flight) => (
-            <Link href={`/flight/${flight.id}`} className="flight" key={flight.id}>
-              <div className="text">
-                <h1 className="where">{flight.to}</h1>
-                <p>חברת תעופה: {flight.Airline}</p>
-                <p>מחיר: {flight.price}</p>
+
+      <main style={{ flex: 1, padding: '20px' }}>
+        <h1>Available Flights</h1>
+        
+        {loading ? (
+          <p>Loading your flights...</p>
+        ) : (
+          <div className="the-flights" style={{ display: 'grid', gap: '20px' }}>
+            {flights.map((flight) => (
+              <div key={flight._id} style={{ border: '1px solid #ccc', padding: '15px', borderRadius: '8px' }}>
+                <h3>Flight to {flight.to}</h3>
+                <p>Airline: {flight.airline}</p>
+                <p>Price: {flight.price}</p>
+                <p>Time: {flight.time}</p>
               </div>
-            </Link>
-          ))}
-        </div>
-      </div>
+            ))}
+          </div>
+        )}
+      </main>
+
+      <Footer />
     </div>
   );
 }
-
-export default function Flights() {
-  return (
-    <Suspense fallback={<div>טוען...</div>}>
-      <FlightsContent />
-    </Suspense>
-  );
-}
-
