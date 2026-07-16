@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer'; // ייבוא הפוטר החדש
-import '../globals.css';
 
 export default function CartPage() {
   const [cartItems, setCartItems] = useState([]);
