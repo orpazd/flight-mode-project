@@ -1,9 +1,9 @@
-// app/favourites/page.jsx
 "use client";
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer'; // 1. ייבוא רכיב הפוטר
 import '../globals.css';
 
 export default function FavouritesPage() {
@@ -21,14 +21,12 @@ export default function FavouritesPage() {
     window.dispatchEvent(new Event('storage'));
   };
 
-  // פונקציה להוספה לסל
   const addToCart = (item) => {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    // בדיקה אם הפריט כבר קיים בסל כדי למנוע כפילויות
     if (!cart.find(c => c.id === item.id)) {
       cart.push(item);
       localStorage.setItem('cart', JSON.stringify(cart));
-      window.dispatchEvent(new Event('storage')); // מעדכן את המונה ב-Navbar
+      window.dispatchEvent(new Event('storage'));
       alert("Added to cart!");
     } else {
       alert("This item is already in your cart.");
@@ -56,7 +54,6 @@ export default function FavouritesPage() {
                   <p style={{ margin: '0', color: '#7f8c8d', fontSize: '14px' }}>Airline: {item.Airline} | Price: {item.price}</p>
                 </div>
                 <div style={{ display: 'flex', gap: '10px' }}>
-                  {/* כפתור הוספה לסל */}
                   <button 
                     onClick={() => addToCart(item)} 
                     style={{ background: '#27ae60', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '5px', cursor: 'pointer', fontSize: '14px', fontWeight: 'bold' }}>
@@ -72,10 +69,8 @@ export default function FavouritesPage() {
         )}
       </div>
 
-      <div id="FOOTER" style={{ marginTop: 'auto' }}>
-        <div className="rights" style={{ textAlign: 'center', padding: '20px 0' }}>כל הזכויות שמורות - אורפז דוד © 2024</div>
-      </div>
+      {/* 2. החלפת ה-div הישן ברכיב ה-Footer */}
+      <Footer />
     </div>
   );
 }
-

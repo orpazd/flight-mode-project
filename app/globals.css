@@ -298,7 +298,7 @@ a {
 }
 
 .full-name { gap: 1%; }
-.submit { gap: 6%; }
+.submit { gap: 4%; }
 
 .title2 {
     float: right;
@@ -327,7 +327,7 @@ a {
 .send {
     font-size: 20px;
     width: 100%;
-    margin-left: 50%;
+    margin-left: 20%;
     border-radius: 8px;
 }
 
