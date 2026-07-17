@@ -1,8 +1,8 @@
-// app/my-bookings/page.jsx
 "use client";
 
 import { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer'; // 1. ייבוא ה-Footer
 import '../globals.css';
 
 export default function MyBookings() {
@@ -14,9 +14,11 @@ export default function MyBookings() {
   }, []);
 
   return (
-    <div id="box">
+    // 2. הוספת ה-flex כדי שהפוטר יישאר למטה
+    <div id="box" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Navbar />
-      <div style={{ padding: '40px', maxWidth: '800px', margin: '0 auto' }}>
+      
+      <div style={{ padding: '40px', maxWidth: '800px', margin: '0 auto', flex: 1, width: '100%' }}>
         <h1>My Bookings ✈️</h1>
         {bookings.length === 0 ? (
           <p>You haven't made any bookings yet.</p>
@@ -33,7 +35,9 @@ export default function MyBookings() {
           ))
         )}
       </div>
+
+      {/* 3. הצבת הפוטר בסוף */}
+      <Footer />
     </div>
   );
 }
-
