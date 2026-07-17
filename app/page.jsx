@@ -60,6 +60,7 @@ export default function Home() {
               <div className="text">
                 <h1 className="where">{flight.to}</h1>
                 <p className="Airline">חברת תעופה: {flight.Airline}</p>
+                 <p className="Airline">תאריכים: {flight.Dates}</p>
                 <p className="time">שעות: {flight.time}</p>
                 <p className="price" style={{ color: '#e74c3c' }}>{flight.price}</p>
               </div>
@@ -74,6 +75,7 @@ export default function Home() {
               <div className="text">
                 <h1 className="where">{flight.to}</h1>
                 <p className="Airline">חברת תעופה: {flight.Airline}</p>
+                <p className="Airline">תאריכים: {flight.Dates}</p>
                 <p className="time">שעות: {flight.time}</p>
                 <p className="price">{flight.price}</p>
               </div>
