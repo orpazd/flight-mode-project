@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer'; // 1. ייבוא רכיב הפוטר
 import './globals.css';
 
 export default function Home() {
@@ -13,7 +14,6 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    // פנייה ל-API הקיים שלך ששולף מ-MongoDB
     fetch('/api/flights')
       .then((res) => res.json())
       .then((data) => {
@@ -32,9 +32,7 @@ export default function Home() {
     }
   };
 
-  // סינון הטיסות מהדאטה שהגיע מה-DB
   const saleFlights = flights.filter(item => item.category === "sale");
-  const vacationPackages = flights.filter(item => item.category === "vacation");
   const regularFlights = flights.filter(item => item.category === "flights");
 
   if (loading) return <div style={{textAlign: 'center', marginTop: '50px'}}>Loading your flights...</div>;
@@ -69,7 +67,6 @@ export default function Home() {
           ))}
         </div>
 
-
         <div className="title">טיסות פופולריות</div>
         <div className="the-flights">
           {regularFlights.map((flight) => (
@@ -85,9 +82,8 @@ export default function Home() {
         </div>
       </div>
 
-      <div id="FOOTER">
-        <div className="rights">כל הזכויות שמורות - אורפז דוד © 2024</div>
-      </div>
+      {/* 2. שימוש ברכיב הפוטר המיובא */}
+      <Footer />
     </div>
   );
 }

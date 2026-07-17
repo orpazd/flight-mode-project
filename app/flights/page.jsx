@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link'; // 1. הוספנו את ה-import הזה
+import Link from 'next/link';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer'; // ודאי שהקובץ נמצא בתיקיית components
 
 export default function FlightsPage() {
   const [flights, setFlights] = useState([]);
@@ -24,14 +25,14 @@ export default function FlightsPage() {
   if (loading) return <h1>טוען טיסות...</h1>;
 
   return (
-    <div id="box">
+    <div id="box" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Navbar />
-      <div id="Main" style={{ padding: '20px' }}>
+      
+      <div id="Main" style={{ padding: '20px', flex: 1 }}>
         <h1 className="title">רשימת הטיסות שלנו</h1>
         
         <div className="the-flights" style={{ display: 'flex', flexWrap: 'wrap', gap: '15px' }}>
-          {flights.slice(0, 20).map((flight) => (
-            /* 2. החלפנו את ה-div ב-Link */
+          {flights.slice(0, 16).map((flight) => (
             <Link 
               key={flight._id} 
               href={`/flight/${flight._id}`} 
@@ -41,9 +42,9 @@ export default function FlightsPage() {
                 padding: '20px', 
                 borderRadius: '10px', 
                 width: '300px',
-                display: 'block', // חשוב כדי שה-Link יתפוס את כל המקום של הכרטיס
-                textDecoration: 'none', // מסיר את הקו התחתון של הקישור
-                color: 'inherit' // שומר על צבע הטקסט המקורי
+                display: 'block',
+                textDecoration: 'none',
+                color: 'inherit'
               }}
             >
               <div className="text">
@@ -58,6 +59,8 @@ export default function FlightsPage() {
           ))}
         </div>
       </div>
+
+      <Footer /> 
     </div>
   );
 }
