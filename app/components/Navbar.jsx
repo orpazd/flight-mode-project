@@ -8,14 +8,19 @@ export default function Navbar() {
   const [cartCount, setCartCount] = useState(0);
   const [favCount, setFavCount] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // הוספת State למנהל
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const updateCounts = () => {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
     const favs = JSON.parse(localStorage.getItem('favourites')) || [];
     setCartCount(cart.length);
     setFavCount(favs.length);
+    
     // בדיקה אם המשתמש מחובר
     setIsLoggedIn(localStorage.getItem('isLoggedIn') === 'true');
+    // הוספת בדיקה אם המשתמש הוא מנהל
+    setIsAdmin(localStorage.getItem('userRole') === 'admin');
   };
 
   useEffect(() => {
@@ -26,8 +31,11 @@ export default function Navbar() {
 
   const handleLogout = () => {
     localStorage.removeItem('isLoggedIn');
+    // הוספת מחיקה של ה-role בהתנתקות
+    localStorage.removeItem('userRole'); 
     setIsLoggedIn(false);
-    window.location.reload(); // רענון כדי לעדכן את ה-Navbar
+    setIsAdmin(false);
+    window.location.reload(); 
   };
 
   return (
@@ -37,7 +45,9 @@ export default function Navbar() {
         <Link href="#" className="button">מבצעי דקה 90</Link>
         <Link href="/flights" className="button">טיסות</Link>
         
-        {/* הלינקים החדשים */}
+        {/* הוספת הקישור לפאנל הניהול אם המשתמש מנהל */}
+        {isAdmin && <Link href="/admin" className="button" style={{ color: 'red' }}>ניהול</Link>}
+        
         {isLoggedIn ? (
           <>
             <Link href="/my-bookings" className="button">ההזמנות שלי</Link>
