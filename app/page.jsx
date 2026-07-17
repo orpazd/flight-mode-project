@@ -46,7 +46,7 @@ export default function Home() {
         <div style={{ textAlign: 'center', padding: '10px' }}>
           <input
             className="Search"
-            placeholder="לאן תרצו לטוס? (לחצו Enter)"
+            placeholder="לאן תרצו לטוס? "
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyDown={handleSearchKeyDown}
@@ -69,19 +69,6 @@ export default function Home() {
           ))}
         </div>
 
-        <div className="title">חבילות נופש חמות</div>
-        <div className="the-flights">
-          {vacationPackages.map((flight) => (
-            <Link href={`/flight/${flight._id}`} className="flight" key={flight._id}>
-              <div className="text">
-                <h1 className="where">{flight.to}</h1>
-                <p className="Airline">טיסה + מלון</p>
-                <p className="time">דיל קומפלט</p>
-                <p className="price">{flight.price}</p>
-              </div>
-            </Link>
-          ))}
-        </div>
 
         <div className="title">טיסות פופולריות</div>
         <div className="the-flights">
