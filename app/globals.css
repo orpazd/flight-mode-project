@@ -217,12 +217,14 @@ a {
     text-align: right;
     color: white;
     padding-right: 2%;
+    margin-top: 3%;
     text-decoration: none !important;
 }
 
 .where {
     font-size: 24px;
     margin-right: 3%;
+    
 }
 
 .Airline {

@@ -1,57 +1,77 @@
 "use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Navbar from '../components/Navbar';
 
-export default function AuthPage() {
-  const [isLogin, setIsLogin] = useState(true); // מצב: האם אנחנו בהתחברות או ברישום?
-  const [formData, setFormData] = useState({ email: '', password: '' });
+export default function LoginPage() {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [isAdmin, setIsAdmin] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    if (isLogin) {
-      // לוגיקת התחברות
-      const users = JSON.parse(localStorage.getItem('users')) || [];
-      const user = users.find(u => u.email === formData.email && u.password === formData.password);
-      
-      if (user) {
-        localStorage.setItem('isLoggedIn', 'true');
-        alert("התחברת בהצלחה!");
-        router.push('/');
-      } else {
-        alert("משתמש לא קיים או סיסמה שגויה");
-      }
-    } else {
-      // לוגיקת רישום
-      const users = JSON.parse(localStorage.getItem('users')) || [];
-      if (users.find(u => u.email === formData.email)) {
-        alert("האימייל הזה כבר רשום במערכת!");
-      } else {
-        users.push(formData);
-        localStorage.setItem('users', JSON.stringify(users));
-        alert("נרשמת בהצלחה! כעת ניתן להתחבר.");
-        setIsLogin(true);
-      }
+  // הוספת ה-useEffect הזה היא התיקון הקריטי:
+  // הוא מוודא שה-Checkbox יהיה מסומן אם המשתמש כבר מנהל
+  useEffect(() => {
+    const savedRole = localStorage.getItem('userRole');
+    if (savedRole === 'admin') {
+      setIsAdmin(true);
     }
+  }, []);
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+
+    // שמירה ב-localStorage
+    localStorage.setItem('userRole', isAdmin ? 'admin' : 'user');
+    
+    // שליחת אירוע לעדכון ה-Navbar
+    window.dispatchEvent(new Event('storage'));
+
+    // ניווט לעמוד הבית
+    router.push('/');
   };
 
   return (
-    <div id="box">
-      <Navbar />
-      <div style={{ maxWidth: '400px', margin: '50px auto', padding: '20px', border: '1px solid #ddd', borderRadius: '8px' }}>
-        <h2>{isLogin ? "התחברות" : "רישום משתמש חדש"}</h2>
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          <input type="email" placeholder="אימייל" required onChange={(e) => setFormData({...formData, email: e.target.value})} />
-          <input type="password" placeholder="סיסמה" required onChange={(e) => setFormData({...formData, password: e.target.value})} />
-          <button type="submit">{isLogin ? "התחבר" : "הירשם"}</button>
-        </form>
-        <p style={{ marginTop: '20px', textAlign: 'center', cursor: 'pointer', color: 'blue' }} onClick={() => setIsLogin(!isLogin)}>
-          {isLogin ? "אין לך חשבון? הירשם עכשיו" : "כבר יש לך חשבון? התחבר כאן"}
-        </p>
-      </div>
+    <div style={{ maxWidth: '400px', margin: '50px auto', padding: '20px', border: '1px solid #ccc', borderRadius: '8px' }}>
+      <h1>התחברות</h1>
+      <form onSubmit={handleLogin}>
+        <div style={{ marginBottom: '15px' }}>
+          <label>שם משתמש:</label><br />
+          <input 
+            type="text" 
+            value={username} 
+            onChange={(e) => setUsername(e.target.value)} 
+            required 
+            style={{ width: '100%', padding: '8px' }}
+          />
+        </div>
+
+        <div style={{ marginBottom: '15px' }}>
+          <label>סיסמה:</label><br />
+          <input 
+            type="password" 
+            value={password} 
+            onChange={(e) => setPassword(e.target.value)} 
+            required 
+            style={{ width: '100%', padding: '8px' }}
+          />
+        </div>
+
+        <div style={{ marginBottom: '15px' }}>
+          <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+            <input 
+              type="checkbox" 
+              checked={isAdmin} 
+              onChange={(e) => setIsAdmin(e.target.checked)} 
+              style={{ marginRight: '10px' }}
+            />
+            אני מנהל מערכת (Admin)
+          </label>
+        </div>
+
+        <button type="submit" style={{ width: '100%', padding: '10px', backgroundColor: '#0070f3', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+          התחבר
+        </button>
+      </form>
     </div>
   );
 }
-
