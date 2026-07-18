@@ -1,4 +1,3 @@
-// app/components/Navbar.jsx
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -8,34 +7,42 @@ export default function Navbar() {
   const [cartCount, setCartCount] = useState(0);
   const [favCount, setFavCount] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  // הוספת State למנהל
   const [isAdmin, setIsAdmin] = useState(false);
 
-  const updateCounts = () => {
+  const updateAuthState = () => {
+    // עדכון מצב התחברות
+    const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    const role = localStorage.getItem('userRole');
+    
+    setIsLoggedIn(loggedIn);
+    setIsAdmin(role === 'admin');
+
+    // עדכון ספירות עגלה ומועדפים
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
     const favs = JSON.parse(localStorage.getItem('favourites')) || [];
     setCartCount(cart.length);
     setFavCount(favs.length);
-    
-    // בדיקה אם המשתמש מחובר
-    setIsLoggedIn(localStorage.getItem('isLoggedIn') === 'true');
-    // הוספת בדיקה אם המשתמש הוא מנהל
-    setIsAdmin(localStorage.getItem('userRole') === 'admin');
   };
 
   useEffect(() => {
-    updateCounts();
-    window.addEventListener('storage', updateCounts);
-    return () => window.removeEventListener('storage', updateCounts);
+    updateAuthState();
+
+    // האזנה לאירועים של שינוי ב-LocalStorage או התחברות
+    window.addEventListener('storage', updateAuthState);
+    window.addEventListener('auth-change', updateAuthState);
+
+    return () => {
+      window.removeEventListener('storage', updateAuthState);
+      window.removeEventListener('auth-change', updateAuthState);
+    };
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('isLoggedIn');
-    // הוספת מחיקה של ה-role בהתנתקות
     localStorage.removeItem('userRole'); 
-    setIsLoggedIn(false);
-    setIsAdmin(false);
-    window.location.reload(); 
+    
+    // שליחת אירוע לעדכון מיידי של כל ה-Navbar
+    window.dispatchEvent(new CustomEvent('auth-change'));
   };
 
   return (
@@ -45,18 +52,22 @@ export default function Navbar() {
         <Link href="#" className="button">מבצעי דקה 90</Link>
         <Link href="/flights" className="button">טיסות</Link>
         
-        {/* הוספת הקישור לפאנל הניהול אם המשתמש מנהל */}
+        {/* קישור ניהול למנהל */}
         {isAdmin && <Link href="/admin" className="button" style={{ color: 'red' }}>ניהול</Link>}
         
+        {/* לוגיקה של התחברות / התנתקות / הזמנות */}
         {isLoggedIn ? (
           <>
             <Link href="/my-bookings" className="button">ההזמנות שלי</Link>
-            <button onClick={handleLogout} className="button" style={{ cursor: 'pointer' }}>התנתק</button>
+            <button onClick={handleLogout} className="button" style={{ cursor: 'pointer', background: 'none', border: 'none' }}>
+              התנתק
+            </button>
           </>
         ) : (
           <Link href="/login" className="button">התחברות</Link>
         )}
 
+        {/* עגלה ומועדפים (החזרתי אותם!) */}
         <Link href="/cart" className="basket" style={{ position: 'relative' }}>
           <img src="/fav.icon/icons8-shopping-cart-50.png" alt="cart" />
           {cartCount > 0 && <span style={badgeStyle}>{cartCount}</span>}
