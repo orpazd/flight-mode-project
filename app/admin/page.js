@@ -19,8 +19,14 @@ export default function AdminPage() {
       const res = await fetch('/api/flights', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+        body: JSON.stringify({
+        to: destination, // השם של המשתנה שמחזיק את היעד
+        Airline: airline,  // ודאי שזה תואם לשדה ה-Airline
+        Dates: date,
+        time: time,
+        price: price
+        }),   
+   });
 
       const data = await res.json();
 

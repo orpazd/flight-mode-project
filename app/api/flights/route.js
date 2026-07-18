@@ -16,15 +16,21 @@ export async function GET() {
 // הפונקציה החדשה להוספת טיסה (POST)
 export async function POST(request) {
   try {
-    await dbConnect(); // מתחברים למונגו
-    const data = await request.json(); // קוראים את הנתונים שנשלחו מהטופס
+    await dbConnect();
+    const data = await request.json();
     
-    // יצירת טיסה חדשה במסד הנתונים
-    const newFlight = await Flight.create(data);
-    
-    return NextResponse.json(newFlight, { status: 201 }); // מחזירים אישור שהטיסה נוצרה
+    // יצירת אובייקט במבנה אחיד
+    const normalizedData = {
+      to: data.to || data.destination || data.Where || "יעד לא צוין",
+      Airline: data.Airline || data.airline || "לא צוין",
+      Dates: data.Dates || data.date || "לא צוין",
+      time: data.time || data.time2 || "לא צוין",
+      price: data.price || "צור קשר"
+    };
+
+    const newFlight = await Flight.create(normalizedData);
+    return NextResponse.json(newFlight, { status: 201 });
   } catch (error) {
-    console.error("API Error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
