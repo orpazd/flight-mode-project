@@ -17,18 +17,19 @@ export default function LoginPage() {
     }
   }, []);
 
-  const handleLogin = (e) => {
-    e.preventDefault();
+const handleLogin = (e) => {
+  e.preventDefault();
 
-    // שמירה ב-localStorage
-    localStorage.setItem('userRole', isAdmin ? 'admin' : 'user');
-    
-    // שליחת אירוע לעדכון ה-Navbar
-    window.dispatchEvent(new Event('storage'));
+  // 1. שמירה ב-localStorage
+  localStorage.setItem('isLoggedIn', 'true'); // הוספנו את זה כדי שה-Navbar ידע שאת מחוברת
+  localStorage.setItem('userRole', isAdmin ? 'admin' : 'user');
+  
+  // 2. השורה הכי חשובה - מעדכנת את ה-Navbar ברגע שהתחברת
+  window.dispatchEvent(new CustomEvent('auth-change'));
 
-    // ניווט לעמוד הבית
-    router.push('/');
-  };
+  // 3. ניווט
+  router.push('/');
+};
 
   return (
     <div style={{ maxWidth: '400px', margin: '50px auto', padding: '20px', border: '1px solid #ccc', borderRadius: '8px' }}>
