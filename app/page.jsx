@@ -4,13 +4,12 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Navbar from './components/Navbar';
-import Footer from './components/Footer'; // 1. ייבוא רכיב הפוטר
+import Footer from './components/Footer'; 
 import './globals.css';
 
 export default function Home() {
   const [flights, setFlights] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
 
   useEffect(() => {
@@ -26,12 +25,6 @@ export default function Home() {
       });
   }, []);
 
-  const handleSearchKeyDown = (e) => {
-    if (e.key === 'Enter' && searchTerm.trim() !== "") {
-      router.push(`/flights?search=${encodeURIComponent(searchTerm.trim())}`);
-    }
-  };
-
   const saleFlights = flights.filter(item => item.category === "sale");
   const regularFlights = flights.filter(item => item.category === "flights");
 
@@ -41,15 +34,6 @@ export default function Home() {
     <div id="box">
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         <Navbar />
-        <div style={{ textAlign: 'center', padding: '10px' }}>
-          <input
-            className="Search"
-            placeholder="לאן תרצו לטוס? "
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyDown={handleSearchKeyDown}
-          />
-        </div>
       </div>
 
       <div id="Main">
@@ -84,7 +68,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* 2. שימוש ברכיב הפוטר המיובא */}
       <Footer />
     </div>
   );
