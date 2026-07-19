@@ -91,31 +91,6 @@ a {
     margin-left: 1%;
 }
 
-/* ==========================================
-   🖼️ גלריית תמונות (Photos Section)
-   ========================================== */
-.photos {
-    display: flex;
-    flex-wrap: wrap;
-    margin-top: 1%;
-    margin-bottom: 3%;
-    gap: 5px;
-    width: 70%;
-    justify-content: center;
-
-}
-
-.Photo {
-    padding: 15px;
-    width: 20rem;
-    height: 10rem;
-}
-
-#header{
-    width: 100%;
-    display: flex;
-    justify-content: center;
-}
 
 /* ==========================================
    🏷️ עמוד הבית - מבצעים וחבילות נופש (Sales & Vacations)
