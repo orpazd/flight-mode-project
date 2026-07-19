@@ -6,6 +6,7 @@ const FlightSchema = new mongoose.Schema({
   airline: String,
   price: String,
   time: String,
+  image: String
 });
 
 export default mongoose.models.Flight || mongoose.model('Flight', FlightSchema);
