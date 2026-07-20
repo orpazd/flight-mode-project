@@ -3,16 +3,23 @@ import dbConnect from '../../../../app/lib/mongodb';
 import Flight from '../../../models/Flight';
 
 // ה-GET הקיים שלך נשאר ללא שינוי (רק שים לב שה-ID ב-params יחייב שליחה דינמית)
-export async function GET(request) {
+export async function GET(request, { params }) {
   try {
-    const { searchParams } = new URL(request.url);
-    const id = searchParams.get('id'); // דרך פשוטה יותר לשלוף ID אם הוא ב-Query string
+    // const { searchParams } = new URL(request.url);
+    // const id = searchParams.get('id'); // דרך פשוטה יותר לשלוף ID אם הוא ב-Query string
     
+    const { id } = await params;
+    console.log("Fetching flight with ID:"); // הוספת לוג כדי לבדוק את הנתונים
+    console.log("ID:", id); // הוספת לוג כדי לבדוק את הנתונים
+
     await dbConnect();
-    
+
     if (id) {
         const flight = await Flight.findById(id);
+
+        console.log("Flight fetched:", flight); // הוספת לוג כדי לבדוק את הנתונים
         if (!flight) return NextResponse.json({ error: "Flight not found" }, { status: 404 });
+
         return NextResponse.json(flight);
     }
 
@@ -20,6 +27,7 @@ export async function GET(request) {
     const flights = await Flight.find({});
     return NextResponse.json(flights);
   } catch (error) {
+    console.error("Error fetching flight:", error); // הוספת לוג כדי לבדוק את הנתונים
     return NextResponse.json({ error: "Server Error" }, { status: 500 });
   }
 }

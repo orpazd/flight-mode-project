@@ -25,7 +25,8 @@ export async function POST(request) {
       Airline: data.Airline || data.airline || "לא צוין",
       Dates: data.Dates || data.date || "לא צוין",
       time: data.time || data.time2 || "לא צוין",
-      price: data.price || "צור קשר"
+      price: data.price || "צור קשר",
+      image: data.image || "" // <--- הנה השורה שהוספנו כדי לקבל את כתובת התמונה מהטופס
     };
 
     const newFlight = await Flight.create(normalizedData);
