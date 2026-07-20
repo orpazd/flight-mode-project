@@ -356,6 +356,35 @@ a {
     margin-top: 10%;
 }
 
+/* ביטול מוחלט של הבעיות */
+* {
+    float: none !important; /* זה יפסיק את כל ה"דחיפות" לצדדים */
+}
+
+#box {
+    direction: rtl !important;
+    text-align: right !important;
+}
+
+/* סידור הגריד של הטיסות */
+.the-flights {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 15px !important;
+    direction: rtl !important;
+    width: 100% !important;
+    margin: 0 !important;
+}
+
+/* סידור הכרטיס עצמו */
+.flight {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important; /* טקסט מימין, תמונה משמאל */
+    direction: rtl !important;
+    width: 100% !important;
+    margin: 0 !important;
+    text-align: right !important;
+}
 
 /* ==========================================
    📱 התאמה למובייל (Mobile View - 0px to 700px)
