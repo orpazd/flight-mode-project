@@ -1,39 +1,51 @@
 "use client";
-
-import React from 'react';
-
-// מערך הטיסות שלך מתוך script.js
-const flights = [
-  { id: 1, to: "רומא", Airline: "אלעל", time: "11:30 - 15:40", time2: "11:30 - 15:40", price: "249$" },
-  { id: 2, to: "פריז", Airline: "אלעל", time: "10:30 - 15:40", time2: "10:30 - 15:40", price: "249$" },
-  { id: 3, to: "ניו יורק", Airline: "אלעל", time: "00:30 - 15:40", time2: "00:30 - 15:40", price: "449$" },
-  { id: 4, to: "לונדון", Airline: "אלעל", time: "11:30 - 15:40", time2: "11:30 - 15:40", price: "249$" },
-  { id: 5, to: "אוסטרליה", Airline: "אלעל", time: "11:30 - 15:40", time2: "11:30 - 15:40", price: "849$" },
-  { id: 6, to: "ברלין", Airline: "אלעל", time: "11:30 - 15:40", time2: "11:30 - 15:40", price: "249$" },
-  { id: 7, to: "מיאמי", Airline: "אלעל", time: "11:30 - 15:40", time2: "11:30 - 15:40", price: "549$" },
-  { id: 8, to: "ורשה", Airline: "אלעל", time: "11:30 - 15:40", time2: "11:30 - 15:40", price: "249$" },
-  { id: 9, to: "אמסטרדם", Airline: "אלעל", time: "11:30 - 15:40", time2: "11:30 - 15:40", price: "249$" },
-  { id: 10, to: "פראג", Airline: "אלעל", time: "11:30 - 15:40", time2: "11:30 - 15:40", price: "249$" },
-  { id: 11, to: "ברצלונה", Airline: "אלעל", time: "11:30 - 15:40", time2: "11:30 - 15:40", price: "249$" },
-  { id: 12, to: "מדריד", Airline: "אלעל", time: "11:30 - 15:40", time2: "11:30 - 15:40", price: "249$" }
-];
+import React, { useState, useEffect } from 'react';
 
 export default function FlightList() {
+  const [flights, setFlights] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // שליפת הטיסות האמיתיות ממסד הנתונים דרך ה-API
+  useEffect(() => {
+    fetch('/api/flights')
+      .then((res) => res.json())
+      .then((data) => {
+        setFlights(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("שגיאה בטעינת הטיסות:", err);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return <div style={{ textAlign: 'center', padding: '20px' }}>טוען טיסות...</div>;
+  }
+
   return (
     <div className="the-flights">
-      {flights.map((flight) => (
-        <a href="#" className="flight" key={flight.id}>
-          <div className="text">
-            <h1 className="where">{flight.to}</h1>
-            <p className="Airline">חברת תעופה: {flight.Airline}</p>
-            <div className="time">
-              <p>הלוך: {flight.time}</p>
-              <p>חזור: {flight.time2}</p>
+      {flights.length === 0 ? (
+        <p style={{ textAlign: 'center' }}>אין טיסות להצגה כרגע.</p>
+      ) : (
+        flights.map((flight) => (
+          <a href="#" className="flight" key={flight._id || flight.id}>
+            {flight.image && (
+              <img src={flight.image} alt={flight.to || flight.destination} style={{ width: '100%', height: '140px', objectFit: 'cover' }} />
+            )}
+            <div className="text">
+              <h1 className="where">{flight.to || flight.destination}</h1>
+              <p className="Airline">
+                חברת תעופה: {flight.Airline || flight.airline || "לא צוין"}
+              </p>
+              <div className="time">
+                <p>זמנים / תאריכים: {flight.Dates || flight.date || flight.time || "לא צוין"}</p>
+              </div>
+              <p className="price">{flight.price}</p>
             </div>
-            <p className="price">{flight.price}</p>
-          </div>
-        </a>
-      ))}
+          </a>
+        ))
+      )}
     </div>
   );
 }

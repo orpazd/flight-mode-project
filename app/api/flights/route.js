@@ -1,32 +1,39 @@
 import { NextResponse } from 'next/server';
-import dbConnect from '../../lib/mongodb'; // הקישור ל-db שהכנו קודם
-import Flight from '../../models/Flight';   // המודל שהכנו קודם
+import dbConnect from '../../lib/mongodb'; 
+import Flight from '../../models/Flight'; 
 
-// הפונקציה הקיימת שלך (שליפת טיסות)
+// מכריח את השרת לא לשמור מטמון ותמיד לשלוף נתונים חדשים ממסד הנתונים
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+// שליפת כל הטיסות (GET)
 export async function GET() {
   try {
-    await dbConnect(); // מתחברים למונגו
-    const flights = await Flight.find({}); // שולפים את כל הטיסות
-    return NextResponse.json(flights); // מחזירים אותן כ-JSON לאתר
+    await dbConnect(); 
+    const flights = await Flight.find({}); 
+    return NextResponse.json(flights, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      },
+    }); 
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch flights" }, { status: 500 });
   }
 }
 
-// הפונקציה החדשה להוספת טיסה (POST)
+// הוספת טיסה חדשה (POST)
 export async function POST(request) {
   try {
     await dbConnect();
     const data = await request.json();
     
-    // יצירת אובייקט במבנה אחיד
     const normalizedData = {
       to: data.to || data.destination || data.Where || "יעד לא צוין",
       Airline: data.Airline || data.airline || "לא צוין",
       Dates: data.Dates || data.date || "לא צוין",
       time: data.time || data.time2 || "לא צוין",
       price: data.price || "צור קשר",
-      image: data.image || "" // <--- הנה השורה שהוספנו כדי לקבל את כתובת התמונה מהטופס
+      image: data.image || "" 
     };
 
     const newFlight = await Flight.create(normalizedData);

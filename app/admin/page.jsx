@@ -44,9 +44,9 @@ export default function AdminPage() {
   };
 
   // לחיצה על כפתור ערוך ברשימה
-  const handleEditClick = (flight) => {
+const handleEditClick = (flight) => {
     const flightId = flight._id || flight.id;
-    console.log("Editing Flight ID:", flightId); // יודא בטרמינל של הדפדפן שה-ID קיים
+    console.log("Editing Flight:", flight); // יודא בטרמינל איזה נתונים מגיעים מהטיסה
     setEditingId(flightId);
 
     let dep = '';
@@ -60,18 +60,21 @@ export default function AdminPage() {
       dep = rawDate;
     }
 
+    // הוספנו כאן תמיכה בכל שם אפשרי שבו חברת התעופה עשויה להיות שמורה במסד הנתונים
+    const extractedAirline = flight.airline || flight.Airline || flight.company || flight.flightCompany || "";
+
     setFormData({
       destination: flight.destination || flight.to || '',
       price: flight.price || '',
       departureDate: dep,
       returnDate: ret,
-      airline: flight.airline || flight.Airline || '',
+      airline: extractedAirline, // מעדכן ישירות את השדה בטופס
       image: flight.image || ''
     });
     setImagePreview(flight.image || '');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-
+  
   const handleCancel = () => {
     setFormData({ destination: '', price: '', departureDate: '', returnDate: '', airline: '', image: '' });
     setImagePreview('');
