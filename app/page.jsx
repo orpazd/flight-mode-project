@@ -24,8 +24,9 @@ export default function Home() {
       });
   }, []);
 
-  const saleFlights = flights.filter(item => item.category === "sale");
-  const regularFlights = flights.filter(item => item.category === "flights");
+  // סינון והגבלה לעד 6 טיסות לכל קטגוריה בעזרת slice(0, 6)
+  const saleFlights = flights.filter(item => item.category === "sale").slice(0, 6);
+  const regularFlights = flights.filter(item => item.category === "flights").slice(0, 6);
 
   // פונקציה עזר ליצירת כרטיס טיסה אחיד
   const renderFlightCard = (flight) => (

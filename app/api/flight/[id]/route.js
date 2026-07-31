@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '../../../../app/lib/mongodb';
-import Flight from '../../../models/Flight';
+import Flight from '../../models/Flight';
 
 // ה-GET הקיים שלך נשאר ללא שינוי (רק שים לב שה-ID ב-params יחייב שליחה דינמית)
 export async function GET(request, { params }) {

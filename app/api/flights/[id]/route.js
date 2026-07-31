@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '../../../lib/mongodb';
-import Flight from '../../../models/Flight';
+import Flight from '../../models/Flight';
 import { mongoose } from 'mongoose';
 
 export async function PUT(request, { params }) {
@@ -9,13 +9,21 @@ export async function PUT(request, { params }) {
     const id = params.id;
     const data = await request.json();
 
+// בדיקה מקיפה של כל שדה אפשרי לתאריך
+    let finalDate = data.date || data.Dates || data.departureDate || data.returnDate;
+    
+    // אם יש גם הלוך וגם חזור נפרדים
+    if (data.departureDate && data.returnDate) {
+      finalDate = `${data.departureDate} - ${data.returnDate}`;
+    }
+
     const normalizedData = {
       destination: data.destination || data.to || "",
       to: data.destination || data.to || "",
       airline: data.airline || data.Airline || "",
       Airline: data.airline || data.Airline || "",
-      date: data.date || data.Dates || "",
-      Dates: data.date || data.Dates || "",
+      date: finalDate || "",
+      Dates: finalDate || "",
       price: data.price || "",
       image: data.image || ""
     };
@@ -46,3 +54,4 @@ export async function PUT(request, { params }) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+

@@ -1,12 +1,10 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '../../lib/mongodb'; 
-import Flight from '../../models/Flight'; 
+import Flight from '../models/Flight'; 
 
-// מכריח את השרת לא לשמור מטמון ותמיד לשלוף נתונים חדשים ממסד הנתונים
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-// שליפת כל הטיסות (GET)
 export async function GET() {
   try {
     await dbConnect(); 
@@ -21,22 +19,33 @@ export async function GET() {
   }
 }
 
-// הוספת טיסה חדשה (POST)
 export async function POST(request) {
   try {
     await dbConnect();
     const data = await request.json();
     
-    const normalizedData = {
-      to: data.to || data.destination || data.Where || "יעד לא צוין",
-      Airline: data.Airline || data.airline || "לא צוין",
-      Dates: data.Dates || data.date || "לא צוין",
+    // הדפסה לבדיקה בטרמינל
+    console.log("נתונים שהתקבלו בשרת:", data);
+
+    let finalDate = data.date || data.Dates;
+    if (!finalDate && (data.departureDate || data.returnDate)) {
+      finalDate = `${data.departureDate || ''} - ${data.returnDate || ''}`;
+    }
+
+    const flightData = {
+      destination: data.destination || data.to || "יעד לא צוין",
+      to: data.destination || data.to || "יעד לא צוין",
+      airline: data.airline || data.Airline || "לא צוין",
+      Airline: data.airline || data.Airline || "לא צוין",
+      date: finalDate || "לא צוין",
+      Dates: finalDate || "לא צוין",
       time: data.time || data.time2 || "לא צוין",
       price: data.price || "צור קשר",
-      image: data.image || "" 
+      image: data.image || "",
+      category: data.category || "flights"
     };
 
-    const newFlight = await Flight.create(normalizedData);
+    const newFlight = await Flight.create(flightData);
     return NextResponse.json(newFlight, { status: 201 });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

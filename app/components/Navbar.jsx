@@ -66,7 +66,7 @@ const handleSearch = (e) => {
           onKeyDown={handleSearch}
         />
 
-        <Link href="#" className="button">מבצעי דקה 90</Link>
+        <Link href="/last-minute" className="button">מבצעי דקה 90</Link>
         <Link href="/flights" className="button">טיסות</Link>
         
         {isAdmin && <Link href="/admin" className="button" style={{ color: 'red' }}>ניהול</Link>}
