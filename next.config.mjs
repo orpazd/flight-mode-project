@@ -1,6 +1,11 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  /* config options here */
+// next.config.js
+export default {
+  images: {
+    // הגדרות קיימות...
+  },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '10mb',
+    },
+  },
 };
-
-export default nextConfig;
