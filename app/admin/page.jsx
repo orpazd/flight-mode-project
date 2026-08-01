@@ -7,9 +7,9 @@ export default function AdminPage() {
     destination: '',
     price: '',
     departureDate: '',
-    departureTime: '', // שדה חדש לשעת הלוך
+    departureTime: '',
     returnDate: '',
-    returnTime: '',    // שדה חדש לשעת חזור
+    returnTime: '',
     airline: '',
     image: ''
   });
@@ -110,8 +110,9 @@ export default function AdminPage() {
     e.preventDefault();
     setLoading(true);
 
+    // שומרים רק את התאריכים נקיים בשדה date/Dates
     const fullDateString = (formData.departureDate && formData.returnDate) 
-      ? `${formData.departureDate} ${formData.departureTime ? '(' + formData.departureTime + ')' : ''} - ${formData.returnDate} ${formData.returnTime ? '(' + formData.returnTime + ')' : ''}` 
+      ? `${formData.departureDate} - ${formData.returnDate}` 
       : (formData.departureDate || formData.returnDate || "לא צוין");
     
     const payload = {
@@ -292,6 +293,13 @@ export default function AdminPage() {
           ) : (
             flights.map((flight) => {
               const flightId = flight._id || flight.id;
+              const dateToShow = flight.date || flight.Dates || 
+                (flight.departureDate && flight.returnDate ? `${flight.departureDate} - ${flight.returnDate}` : (flight.departureDate || flight.returnDate));
+              
+              const timeToShow = (flight.departureTime && flight.returnTime) 
+                ? `${flight.departureTime} - ${flight.returnTime}` 
+                : (flight.departureTime || flight.returnTime);
+
               return (
                 <div 
                   key={flightId} 
@@ -314,14 +322,13 @@ export default function AdminPage() {
                       <strong style={{ fontSize: '18px' }}>{flight.destination || flight.to}</strong> 
                       <span style={{ color: '#555', marginRight: '10px' }}>({flight.airline || flight.Airline})</span>
                       <div style={{ color: '#e74c3c', fontWeight: 'bold', marginTop: '4px' }}>
-                        {flight.price} {
-                          (() => {
-                            const dateToShow = flight.date || flight.Dates || 
-                              (flight.departureDate && flight.returnDate ? `${flight.departureDate} - ${flight.returnDate}` : (flight.departureDate || flight.returnDate));
-                            return dateToShow ? `| ${dateToShow}` : '';
-                          })()
-                        }
+                        {flight.price} {dateToShow ? `| תאריך: ${dateToShow}` : ''}
                       </div>
+                      {timeToShow && (
+                        <div style={{ color: '#555', fontSize: '14px', marginTop: '2px' }}>
+                          שעות: {timeToShow}
+                        </div>
+                      )}
                     </div>
                   </div>
                   

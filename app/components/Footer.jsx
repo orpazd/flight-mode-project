@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from 'react';
+import Link from 'next/link';
 
 export default function Footer() {
   const [firstName, setFirstName] = useState('');
@@ -77,9 +78,9 @@ export default function Footer() {
       {/* Bottom */}
       <div className="end">
         <div>
-          <button className="ends">תקנון</button>
-          <button className="ends">אודות</button>
-          <button className="ends">שאלות תשובות</button>
+          <Link href="/terms"><button className="ends">תקנון</button></Link>
+          <Link href="/about"><button className="ends">אודות</button></Link>
+          <Link href="/faq"><button className="ends">שאלות תשובות</button></Link>
         </div>
         <div className="rights">כל הזכויות שמורות - אורפז דוד © 2024</div>
       </div>

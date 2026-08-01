@@ -39,47 +39,66 @@ function FlightsList() {
       padding: '20px' 
     }}>
       {filteredFlights.length > 0 ? (
-        filteredFlights.map((flight) => (
-          <Link 
-            key={flight._id} 
-            href={`/flight/${flight._id}`} 
-            className="flight-card"
-            style={{ 
-              display: 'flex',
-              flexDirection: 'row', // תמונה מימין, טקסט משמאל
-              height: '200px',
-              border: '1px solid #ccc',
-              borderRadius: '10px',
-              textDecoration: 'none',
-              color: 'black',
-              overflow: 'hidden',
-              backgroundColor: 'white'
-            }}
-          >
-            {/* צד תמונה (ימין) */}
-            <div 
-              style={{
-                flex: '1',
-                backgroundImage: `url(${flight.image || '/images/placeholder.jpg'})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-              }}
-            />
+        filteredFlights.map((flight) => {
+          // שליפה חכמה של השעות: תומך גם במבנה החדש (departureTime + returnTime) וגם בישן (time)
+          let timeToShow = "";
+          if (flight.departureTime && flight.returnTime) {
+            timeToShow = `${flight.departureTime} - ${flight.returnTime}`;
+          } else if (flight.departureTime) {
+            timeToShow = flight.departureTime;
+          } else {
+            timeToShow = flight.time || flight.Times || "";
+          }
 
-            {/* צד טקסט (שמאל) */}
-            <div style={{ flex: '1', padding: '15px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-              <div>
-                <h1 style={{ fontSize: '1.1rem', margin: '0 0 5px 0' }}>{flight.to || flight.destination || "יעד לא צוין"}</h1>
-                <p style={{ margin: '2px 0', fontSize: '0.8rem' }}>
-                  חברת תעופה: {flight.airline || flight.Airline || flight.company || flight.flightCompany || "לא צוין"}
-                </p>
-                <p style={{ margin: '2px 0', fontSize: '0.8rem' }}>תאריך: {flight.Dates || flight.date || "לא צוין"}</p>
-                <p style={{ margin: '2px 0', fontSize: '0.8rem' }}>שעות: {flight.time || "לא צוין"}</p>
+          const dateToShow = flight.date || flight.Dates || 
+            (flight.departureDate && flight.returnDate ? `${flight.departureDate} - ${flight.returnDate}` : "");
+
+          return (
+            <Link 
+              key={flight._id || flight.id} 
+              href={`/flight/${flight._id || flight.id}`} 
+              className="flight-card"
+              style={{ 
+                display: 'flex',
+                flexDirection: 'row', 
+                height: '200px',
+                border: '1px solid #ccc',
+                borderRadius: '10px',
+                textDecoration: 'none',
+                color: 'black',
+                overflow: 'hidden',
+                backgroundColor: 'white'
+              }}
+            >
+              {/* צד תמונה (ימין) */}
+              <div 
+                style={{
+                  flex: '1',
+                  backgroundImage: `url(${flight.image || '/images/placeholder.jpg'})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }}
+              />
+
+              {/* צד טקסט (שמאל) */}
+              <div style={{ flex: '1', padding: '15px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div>
+                  <h1 style={{ fontSize: '1.1rem', margin: '0 0 5px 0' }}>{flight.to || flight.destination || "יעד לא צוין"}</h1>
+                  <p style={{ margin: '2px 0', fontSize: '0.8rem' }}>
+                    חברת תעופה: {flight.airline || flight.Airline || "לא צוין"}
+                  </p>
+                  <p style={{ margin: '2px 0', fontSize: '0.8rem', direction: 'ltr', textAlign: 'right' }}>
+                    תאריך: {dateToShow || "לא צוין"}
+                  </p>
+                  <p style={{ margin: '2px 0', fontSize: '0.8rem', direction: 'ltr', textAlign: 'right' }}>
+                    שעות: {timeToShow || "לא צוין"}
+                  </p>
+                </div>
+                <p style={{ fontWeight: 'bold', fontSize: '1rem', margin: '0' }}>{flight.price || "צור קשר"}</p>
               </div>
-              <p style={{ fontWeight: 'bold', fontSize: '1rem', margin: '0' }}>{flight.price || "צור קשר"}</p>
-            </div>
-          </Link>
-        ))
+            </Link>
+          );
+        })
       ) : (
         <p>לא נמצאו טיסות תואמות לחיפוש "{searchTerm}"</p>
       )}
