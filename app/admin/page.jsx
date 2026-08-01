@@ -7,7 +7,9 @@ export default function AdminPage() {
     destination: '',
     price: '',
     departureDate: '',
+    departureTime: '', // שדה חדש לשעת הלוך
     returnDate: '',
+    returnTime: '',    // שדה חדש לשעת חזור
     airline: '',
     image: ''
   });
@@ -65,7 +67,9 @@ export default function AdminPage() {
       destination: flight.destination || flight.to || '',
       price: flight.price || '',
       departureDate: dep,
+      departureTime: flight.departureTime || '',
       returnDate: ret,
+      returnTime: flight.returnTime || '',
       airline: extractedAirline,
       image: flight.image || ''
     });
@@ -74,7 +78,7 @@ export default function AdminPage() {
   };
   
   const handleCancel = () => {
-    setFormData({ destination: '', price: '', departureDate: '', returnDate: '', airline: '', image: '' });
+    setFormData({ destination: '', price: '', departureDate: '', departureTime: '', returnDate: '', returnTime: '', airline: '', image: '' });
     setImagePreview('');
     setEditingId(null);
   };
@@ -107,7 +111,7 @@ export default function AdminPage() {
     setLoading(true);
 
     const fullDateString = (formData.departureDate && formData.returnDate) 
-      ? `${formData.departureDate} - ${formData.returnDate}` 
+      ? `${formData.departureDate} ${formData.departureTime ? '(' + formData.departureTime + ')' : ''} - ${formData.returnDate} ${formData.returnTime ? '(' + formData.returnTime + ')' : ''}` 
       : (formData.departureDate || formData.returnDate || "לא צוין");
     
     const payload = {
@@ -117,7 +121,9 @@ export default function AdminPage() {
       airline: formData.airline,
       Airline: formData.airline,
       departureDate: formData.departureDate,
+      departureTime: formData.departureTime,
       returnDate: formData.returnDate,
+      returnTime: formData.returnTime,
       date: fullDateString,
       Dates: fullDateString,
       image: formData.image
@@ -142,7 +148,7 @@ export default function AdminPage() {
       }
 
       alert(editingId ? "הטיסה עודכנה בהצלחה!" : "הטיסה נוספה בהצלחה!");
-      setFormData({ destination: '', price: '', departureDate: '', returnDate: '', airline: '', image: '' });
+      setFormData({ destination: '', price: '', departureDate: '', departureTime: '', returnDate: '', returnTime: '', airline: '', image: '' });
       setImagePreview('');
       setEditingId(null);
       fetchFlights();
@@ -188,6 +194,7 @@ export default function AdminPage() {
             style={{ padding: '10px', fontSize: '16px' }}
           />
 
+          {/* שורת תאריך ושעת הלוך */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
               <label style={{ fontSize: '14px', color: '#555', fontWeight: 'bold' }}>תאריך הלוך:</label>
@@ -200,12 +207,34 @@ export default function AdminPage() {
               />
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+              <label style={{ fontSize: '14px', color: '#555', fontWeight: 'bold' }}>שעת הלוך:</label>
+              <input 
+                type="time" 
+                value={formData.departureTime} 
+                onChange={(e) => setFormData({...formData, departureTime: e.target.value})} 
+                style={{ padding: '10px', fontSize: '16px', cursor: 'pointer' }}
+              />
+            </div>
+          </div>
+
+          {/* שורת תאריך ושעת חזור */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
               <label style={{ fontSize: '14px', color: '#555', fontWeight: 'bold' }}>תאריך חזור:</label>
               <input 
                 type="date" 
                 value={formData.returnDate} 
                 onChange={(e) => setFormData({...formData, returnDate: e.target.value})} 
                 required 
+                style={{ padding: '10px', fontSize: '16px', cursor: 'pointer' }}
+              />
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+              <label style={{ fontSize: '14px', color: '#555', fontWeight: 'bold' }}>שעת חזור:</label>
+              <input 
+                type="time" 
+                value={formData.returnTime} 
+                onChange={(e) => setFormData({...formData, returnTime: e.target.value})} 
                 style={{ padding: '10px', fontSize: '16px', cursor: 'pointer' }}
               />
             </div>
