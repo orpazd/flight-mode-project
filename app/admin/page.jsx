@@ -13,7 +13,7 @@ export default function AdminPage() {
   });
 
   const [flights, setFlights] = useState([]);
-  const [editingId, setEditingId] = useState(null); // משתנה ששומר את ה-ID של הטיסה שנערכת
+  const [editingId, setEditingId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState('');
 
@@ -43,10 +43,8 @@ export default function AdminPage() {
     }
   };
 
-  // לחיצה על כפתור ערוך ברשימה
-const handleEditClick = (flight) => {
+  const handleEditClick = (flight) => {
     const flightId = flight._id || flight.id;
-    console.log("Editing Flight:", flight); // יודא בטרמינל איזה נתונים מגיעים מהטיסה
     setEditingId(flightId);
 
     let dep = '';
@@ -60,7 +58,6 @@ const handleEditClick = (flight) => {
       dep = rawDate;
     }
 
-    // הוספנו כאן תמיכה בכל שם אפשרי שבו חברת התעופה עשויה להיות שמורה במסד הנתונים
     const extractedAirline = flight.airline || flight.Airline || flight.company || flight.flightCompany || "";
 
     setFormData({
@@ -68,7 +65,7 @@ const handleEditClick = (flight) => {
       price: flight.price || '',
       departureDate: dep,
       returnDate: ret,
-      airline: extractedAirline, // מעדכן ישירות את השדה בטופס
+      airline: extractedAirline,
       image: flight.image || ''
     });
     setImagePreview(flight.image || '');
@@ -81,11 +78,36 @@ const handleEditClick = (flight) => {
     setEditingId(null);
   };
 
+  // מחיקת טיסה
+  const handleDelete = async (flightId) => {
+    if (!confirm("האם את בטוחה שברצונך למחוק טיסה זו?")) return;
+
+    try {
+      const res = await fetch(`/api/flights/${flightId}`, {
+        method: 'DELETE',
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        alert("שגיאה במחיקה: " + (errorData.error || "לא ניתן למחוק"));
+        return;
+      }
+
+      alert("הטיסה נמחקה בהצלחה!");
+      fetchFlights(); // רענון הרשימה במסך
+    } catch (err) {
+      console.error("Delete error:", err);
+      alert("שגיאת רשת בעת מחיקת הטיסה");
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    const fullDateString = `${formData.departureDate} - ${formData.returnDate}`;
+    const fullDateString = (formData.departureDate && formData.returnDate) 
+      ? `${formData.departureDate} - ${formData.returnDate}` 
+      : (formData.departureDate || formData.returnDate || "לא צוין");
     
     const payload = {
       destination: formData.destination,
@@ -93,16 +115,15 @@ const handleEditClick = (flight) => {
       price: formData.price,
       airline: formData.airline,
       Airline: formData.airline,
+      departureDate: formData.departureDate,
+      returnDate: formData.returnDate,
       date: fullDateString,
       Dates: fullDateString,
       image: formData.image
     };
 
-    // אם יש editingId - שולחים PUT לכתובת הספציפית. אם אין - שולחים POST חדש.
     const url = editingId ? `/api/flights/${editingId}` : '/api/flights';
     const method = editingId ? 'PUT' : 'POST';
-
-    console.log("Submitting form with method:", method, "to URL:", url);
 
     try {
       const res = await fetch(url, {
@@ -239,48 +260,70 @@ const handleEditClick = (flight) => {
           {flights.length === 0 ? (
             <p>אין טיסות במערכת כרגע.</p>
           ) : (
-            flights.map((flight) => (
-              <div 
-                key={flight._id || flight.id} 
-                style={{ 
-                  display: 'flex', 
-                  justifyContent: 'space-between', 
-                  alignItems: 'center', 
-                  padding: '15px', 
-                  border: '1px solid #ccc', 
-                  borderRadius: '6px', 
-                  background: 'white',
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                  {flight.image && (
-                    <img src={flight.image} alt={flight.destination} style={{ width: '50px', height: '40px', objectFit: 'cover', borderRadius: '4px' }} />
-                  )}
-                  <div>
-                    <strong style={{ fontSize: '18px' }}>{flight.destination || flight.to}</strong> 
-                    <span style={{ color: '#555', marginRight: '10px' }}>({flight.airline || flight.Airline})</span>
-                    <div style={{ color: '#e74c3c', fontWeight: 'bold', marginTop: '4px' }}>
-                      {flight.price} {(flight.date || flight.Dates) ? `| ${flight.date || flight.Dates}` : ''}
-                    </div>
-                  </div>
-                </div>
-                <button 
-                  onClick={() => handleEditClick(flight)}
+            flights.map((flight) => {
+              const flightId = flight._id || flight.id;
+              return (
+                <div 
+                  key={flightId} 
                   style={{ 
-                    padding: '8px 20px', 
-                    background: '#3498db', 
-                    color: 'white', 
-                    border: 'none', 
-                    borderRadius: '4px', 
-                    cursor: 'pointer',
-                    fontWeight: 'bold'
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center', 
+                    padding: '15px', 
+                    border: '1px solid #ccc', 
+                    borderRadius: '6px', 
+                    background: 'white',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
                   }}
                 >
-                  ערוך
-                </button>
-              </div>
-            ))
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                    {flight.image && (
+                      <img src={flight.image} alt={flight.destination} style={{ width: '50px', height: '40px', objectFit: 'cover', borderRadius: '4px' }} />
+                    )}
+                    <div>
+                      <strong style={{ fontSize: '18px' }}>{flight.destination || flight.to}</strong> 
+                      <span style={{ color: '#555', marginRight: '10px' }}>({flight.airline || flight.Airline})</span>
+                      <div style={{ color: '#e74c3c', fontWeight: 'bold', marginTop: '4px' }}>
+                        {flight.price} {(flight.date || flight.Dates) ? `| ${flight.date || flight.Dates}` : ''}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button 
+                      type="button"
+                      onClick={() => handleEditClick(flight)}
+                      style={{ 
+                        padding: '8px 15px', 
+                        background: '#3498db', 
+                        color: 'white', 
+                        border: 'none', 
+                        borderRadius: '4px', 
+                        cursor: 'pointer',
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      ערוך
+                    </button>
+                    <button 
+                      type="button"
+                      onClick={() => handleDelete(flightId)}
+                      style={{ 
+                        padding: '8px 15px', 
+                        background: '#e74c3c', 
+                        color: 'white', 
+                        border: 'none', 
+                        borderRadius: '4px', 
+                        cursor: 'pointer',
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      מחק
+                    </button>
+                  </div>
+                </div>
+              );
+            })
           )}
         </div>
       </div>

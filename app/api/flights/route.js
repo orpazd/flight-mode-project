@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '../../lib/mongodb'; 
-import Flight from '../models/Flight'; 
+import Flight from '../../models/Flight'; 
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
