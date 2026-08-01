@@ -47,14 +47,15 @@ export default function AdminPage() {
     const flightId = flight._id || flight.id;
     setEditingId(flightId);
 
-    let dep = '';
-    let ret = '';
+    let dep = flight.departureDate || '';
+    let ret = flight.returnDate || '';
     const rawDate = flight.date || flight.Dates || '';
-    if (rawDate.includes(' - ')) {
+    
+    if ((!dep || !ret) && rawDate.includes(' - ')) {
       const parts = rawDate.split(' - ');
       dep = parts[0] || '';
       ret = parts[1] || '';
-    } else {
+    } else if (!dep) {
       dep = rawDate;
     }
 
@@ -94,7 +95,7 @@ export default function AdminPage() {
       }
 
       alert("הטיסה נמחקה בהצלחה!");
-      fetchFlights(); // רענון הרשימה במסך
+      fetchFlights();
     } catch (err) {
       console.error("Delete error:", err);
       alert("שגיאת רשת בעת מחיקת הטיסה");
@@ -284,7 +285,13 @@ export default function AdminPage() {
                       <strong style={{ fontSize: '18px' }}>{flight.destination || flight.to}</strong> 
                       <span style={{ color: '#555', marginRight: '10px' }}>({flight.airline || flight.Airline})</span>
                       <div style={{ color: '#e74c3c', fontWeight: 'bold', marginTop: '4px' }}>
-                        {flight.price} {(flight.date || flight.Dates) ? `| ${flight.date || flight.Dates}` : ''}
+                        {flight.price} {
+                          (() => {
+                            const dateToShow = flight.date || flight.Dates || 
+                              (flight.departureDate && flight.returnDate ? `${flight.departureDate} - ${flight.returnDate}` : (flight.departureDate || flight.returnDate));
+                            return dateToShow ? `| ${dateToShow}` : '';
+                          })()
+                        }
                       </div>
                     </div>
                   </div>

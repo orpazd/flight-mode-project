@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import dbConnect from '../../lib/mongodb'; 
-import Flight from '../../models/Flight'; 
+import dbConnect from '@/app/lib/mongodb'; 
+import Flight from '@/app/models/Flight'; 
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -37,6 +37,8 @@ export async function POST(request) {
       to: data.destination || data.to || "יעד לא צוין",
       airline: data.airline || data.Airline || "לא צוין",
       Airline: data.airline || data.Airline || "לא צוין",
+      departureDate: data.departureDate || "",
+      returnDate: data.returnDate || "",
       date: finalDate || "לא צוין",
       Dates: finalDate || "לא צוין",
       time: data.time || data.time2 || "לא צוין",
@@ -50,4 +52,4 @@ export async function POST(request) {
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-}
+} 
