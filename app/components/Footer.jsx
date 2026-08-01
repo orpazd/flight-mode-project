@@ -1,22 +1,57 @@
 // app/components/Footer.jsx
+"use client";
+
+import { useState } from 'react';
+
 export default function Footer() {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+
+  const handleSubscribe = (e) => {
+    e.preventDefault();
+    alert('נרשם בהצלחה');
+    setFirstName('');
+    setLastName('');
+    setEmail('');
+  };
+
   return (
     <div id="FOOTER">
       <div className="information">
         {/* Subscribe */}
-        <div className="Subscrib">
+        <form onSubmit={handleSubscribe} className="Subscrib">
           <div className="title2">לקבלת מבצעים שווים למייל הירשמו</div>
           <div className="Registration">
             <div className="full-name">
-              <input className="last-name" placeholder="שם משפחה" />
-              <input className="first-name" placeholder="שם פרטי" />
+              <input 
+                className="last-name" 
+                placeholder="שם משפחה" 
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                required
+              />
+              <input 
+                className="first-name" 
+                placeholder="שם פרטי" 
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                required
+              />
             </div>
             <div className="submit">
-              <button className="send">הרשמה</button>
-              <input className="E-mail" placeholder="הכנס אימייל" />
+              <button type="submit" className="send">הרשמה</button>
+              <input 
+                type="email"
+                className="E-mail" 
+                placeholder="הכנס אימייל" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
             </div>
           </div>
-        </div>
+        </form>
 
         {/* Contact */}
         <div className="contact">

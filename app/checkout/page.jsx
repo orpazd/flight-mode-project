@@ -18,16 +18,41 @@ export default function CheckoutPage() {
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
 
+  // סטייט עבור קוד קופון
+  const [couponInput, setCouponInput] = useState('');
+  const [appliedDiscount, setAppliedDiscount] = useState(0); // 0 או 0.1 (10%)
+  const [couponMessage, setCouponMessage] = useState('');
+
+  // קוד הקופון המוגדר
+  const VALID_COUPON = 'ORPAZ77';
+
   useEffect(() => {
     const savedCart = JSON.parse(localStorage.getItem('cart')) || [];
     setCartItems(savedCart);
   }, []);
 
-  const calculateTotal = () => {
+  const calculateSubtotal = () => {
     return cartItems.reduce((sum, item) => {
       const priceAsNumber = Number(item.price.replace(/[^0-9.-]+/g, ""));
       return sum + priceAsNumber;
     }, 0);
+  };
+
+  const calculateTotal = () => {
+    const subtotal = calculateSubtotal();
+    const totalWithDiscount = subtotal * (1 - appliedDiscount);
+    return totalWithDiscount.toFixed(2);
+  };
+
+  const handleApplyCoupon = (e) => {
+    e.preventDefault();
+    if (couponInput.trim().toUpperCase() === VALID_COUPON) {
+      setAppliedDiscount(0.1); // 10% הנחה
+      setCouponMessage('🎉 Coupon applied successfully! 10% discount added.');
+    } else {
+      setAppliedDiscount(0);
+      setCouponMessage('❌ Invalid coupon code.');
+    }
   };
 
   const handleInputChange = (e) => {
@@ -40,6 +65,8 @@ export default function CheckoutPage() {
     const existingBookings = JSON.parse(localStorage.getItem('myBookings')) || [];
     const newBooking = {
       items: cartItems,
+      totalPaid: calculateTotal(),
+      discountApplied: appliedDiscount > 0 ? '10%' : 'None',
       date: new Date().toLocaleDateString(),
       id: Date.now()
     };
@@ -95,7 +122,6 @@ export default function CheckoutPage() {
                       <span style={{ fontWeight: 'bold', color: '#27ae60', fontSize: '16px' }}>{item.price}</span>
                     </div>
 
-                    {/* פירוט כבודה שנוספה לכרטיס */}
                     <div style={{ marginTop: '8px', fontSize: '12px', background: '#fff', padding: '6px 10px', borderRadius: '4px', border: '1px solid #eee', display: 'flex', flexDirection: 'column', gap: '3px' }}>
                       <span style={{ color: '#117a65' }}>✓ Includes: Personal Backpack (Free)</span>
                       {item.luggageChoice && item.luggageChoice !== 'No extra luggage' && (
@@ -106,7 +132,40 @@ export default function CheckoutPage() {
                 ))}
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '22px', fontWeight: 'bold', borderTop: '2px solid #333', paddingTop: '15px', marginTop: '20px' }}>
+              {/* אזור הזנת קופון עם הכיתוב החדש */}
+              <div style={{ margin: '20px 0', padding: '15px', background: '#fff', borderRadius: '6px', border: '1px solid #e0e0e0' }}>
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: 'bold', marginBottom: '8px' }}>הוסף קוד קופון</label>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <input 
+                    type="text" 
+                    placeholder="add coupon code" 
+                    value={couponInput}
+                    onChange={(e) => setCouponInput(e.target.value)}
+                    style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', flex: 1, fontSize: '14px' }}
+                  />
+                  <button 
+                    type="button" 
+                    onClick={handleApplyCoupon}
+                    style={{ background: '#3498db', border: 'none', padding: '8px 15px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', color: '#fff' }}
+                  >
+                    Apply
+                  </button>
+                </div>
+                {couponMessage && (
+                  <p style={{ fontSize: '12px', marginTop: '6px', color: appliedDiscount > 0 ? '#27ae60' : '#e74c3c', fontWeight: 'bold' }}>
+                    {couponMessage}
+                  </p>
+                )}
+              </div>
+
+              {appliedDiscount > 0 && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '15px', color: '#27ae60', marginBottom: '10px' }}>
+                  <span>Discount (10%):</span>
+                  <span>-${(calculateSubtotal() * appliedDiscount).toFixed(2)}</span>
+                </div>
+              )}
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '22px', fontWeight: 'bold', borderTop: '2px solid #333', paddingTop: '15px', marginTop: '10px' }}>
                 <span>Total Price:</span>
                 <span style={{ color: '#27ae60' }}>${calculateTotal()}</span>
               </div>
