@@ -85,16 +85,27 @@ export default function CheckoutPage() {
             <div style={{ background: '#f9f9f9', padding: '25px', borderRadius: '8px', height: 'fit-content' }}>
               <h2 style={{ marginTop: 0, color: '#2c3e50', fontSize: '20px' }}>Order Summary</h2>
               <div style={{ margin: '20px 0', display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                {cartItems.map(item => (
-                  <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #e0e0e0', paddingBottom: '10px' }}>
-                    <div>
-                      <strong style={{ fontSize: '16px' }}>Flight to {item.to}</strong>
-                      <div style={{ fontSize: '13px', color: '#7f8c8d' }}>{item.Airline} | {item.time}</div>
+                {cartItems.map((item, index) => (
+                  <div key={item._id || index} style={{ borderBottom: '1px solid #e0e0e0', paddingBottom: '12px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                      <div>
+                        <strong style={{ fontSize: '16px' }}>Flight to {item.to}</strong>
+                        <div style={{ fontSize: '13px', color: '#7f8c8d', marginTop: '2px' }}>{item.Airline} | {item.time}</div>
+                      </div>
+                      <span style={{ fontWeight: 'bold', color: '#27ae60', fontSize: '16px' }}>{item.price}</span>
                     </div>
-                    <span style={{ fontWeight: 'bold', color: '#27ae60' }}>{item.price}</span>
+
+                    {/* פירוט כבודה שנוספה לכרטיס */}
+                    <div style={{ marginTop: '8px', fontSize: '12px', background: '#fff', padding: '6px 10px', borderRadius: '4px', border: '1px solid #eee', display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                      <span style={{ color: '#117a65' }}>✓ Includes: Personal Backpack (Free)</span>
+                      {item.luggageChoice && item.luggageChoice !== 'No extra luggage' && (
+                        <span style={{ color: '#d35400', fontWeight: 'bold' }}>+ Extra Luggage: {item.luggageChoice}</span>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
+
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '22px', fontWeight: 'bold', borderTop: '2px solid #333', paddingTop: '15px', marginTop: '20px' }}>
                 <span>Total Price:</span>
                 <span style={{ color: '#27ae60' }}>${calculateTotal()}</span>
@@ -102,7 +113,6 @@ export default function CheckoutPage() {
             </div>
 
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              {/* טופס פרטים ותשלום נשאר כפי שהיה */}
               <div>
                 <h3 style={{ margin: '0 0 15px 0', color: '#2c3e50', borderBottom: '1px solid #eee', paddingBottom: '5px' }}>1. Passenger Details</h3>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '10px' }}>

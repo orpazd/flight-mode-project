@@ -11,6 +11,11 @@ export default function FlightPage() {
   const { id } = useParams();
   const [flight, setFlight] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [luggageType, setLuggageType] = useState('none'); // 'none', 'trolley10', 'baggage23'
+
+  // עלויות נוספות לכבודה
+  const TROLLEY_PRICE = 30; // מחיר טרולי 10 קילו
+  const BAGGAGE_PRICE = 60; // מחיר מזוודה 23 קילו
 
   useEffect(() => {
     if (id) {
@@ -30,16 +35,36 @@ export default function FlightPage() {
   if (loading) return <div style={{textAlign: 'center', marginTop: '50px'}}>Loading flight...</div>;
   if (!flight) return <div style={{textAlign: 'center', marginTop: '50px'}}>Flight not found!</div>;
 
+  // חישוב מחיר בסיס והוספת תשלום לפי סוג הכבודה שנבחר
+  const numericPrice = parseFloat(flight.price.replace(/[^0-9.]/g, '')) || 0;
+  let luggageExtraCost = 0;
+  let luggageDescription = 'No extra luggage';
+
+  if (luggageType === 'trolley10') {
+    luggageExtraCost = TROLLEY_PRICE;
+    luggageDescription = 'Trolley 10 kg';
+  } else if (luggageType === 'baggage23') {
+    luggageExtraCost = BAGGAGE_PRICE;
+    luggageDescription = 'Baggage 23 kg';
+  }
+
+  const finalPrice = numericPrice + luggageExtraCost;
+  const currencySymbol = flight.price.includes('$') ? '$' : '';
+
   // פונקציה להוספה לעגלה
   const addToCart = () => {
     const existingCart = JSON.parse(localStorage.getItem('cart')) || [];
-    if (!existingCart.some(item => item._id === flight._id)) {
-      existingCart.push(flight);
-      localStorage.setItem('cart', JSON.stringify(existingCart));
-      alert(`Flight to ${flight.to} added to cart!`);
-    } else {
-      alert("Already in your cart.");
-    }
+    
+    const flightWithExtras = {
+      ...flight,
+      luggageChoice: luggageDescription,
+      finalPrice: `${finalPrice}${currencySymbol}`,
+      price: `${finalPrice}${currencySymbol}`
+    };
+
+    existingCart.push(flightWithExtras);
+    localStorage.setItem('cart', JSON.stringify(existingCart));
+    alert(`Flight to ${flight.to} added to cart! (${luggageDescription})`);
   };
 
   // פונקציה להוספה למועדפים
@@ -54,28 +79,102 @@ export default function FlightPage() {
     }
   };
 
+  const flightImage = flight.image || flight.img;
+
   return (
     <div id="box" style={{ direction: 'ltr', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Navbar />
 
-      <div style={{ padding: '40px 20px', maxWidth: '800px', margin: '40px auto', flex: 1 }}>
-        <div style={{ background: '#fff', padding: '30px', borderRadius: '10px', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }}>
-          <h1>Flight Details to {flight.to}</h1>
-          <p><strong>Airline:</strong> {flight.Airline}</p>
-          <p><strong>Times:</strong> {flight.time}</p>
-          <p style={{ fontSize: '22px', fontWeight: 'bold', color: '#27ae60' }}>Price: {flight.price}</p>
+      <div style={{ padding: '40px 20px', maxWidth: '900px', margin: '40px auto', flex: 1, width: '100%' }}>
+        <div style={{ 
+          background: '#fff', 
+          borderRadius: '10px', 
+          boxShadow: '0 4px 15px rgba(0,0,0,0.1)', 
+          display: 'flex', 
+          flexDirection: 'row', 
+          overflow: 'hidden',
+          alignItems: 'stretch'
+        }}>
           
-          <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-            {/* כפתור עגלה */}
-            <button onClick={addToCart} style={{ background: '#3498db', color: 'white', padding: '10px 20px', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
-              Add to Cart 🛒
-            </button>
+          {/* צד אחד: תמונה */}
+          {flightImage && (
+            <div style={{ flex: '1', minHeight: '300px' }}>
+              <img 
+                src={flightImage} 
+                alt={flight.to} 
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+              />
+            </div>
+          )}
+
+          {/* צד שני: פרטי הטיסה */}
+          <div style={{ flex: '1', padding: '30px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div>
+              <h1 style={{ marginTop: 0, fontSize: '28px' }}>{flight.to}</h1>
+              <p className="Airline"><strong>חברת תעופה:</strong> {flight.Airline}</p>
+              <p className="Airline"><strong>תאריכים:</strong> {flight.Dates || flight.date}</p>
+              <p className="time"><strong>שעות:</strong> {flight.time}</p>
+              
+              {/* הודעה על תיק גב כלול */}
+              <div style={{ margin: '10px 0', padding: '8px 12px', background: '#e8f8f5', borderRadius: '5px', border: '1px solid #a3e4d7', color: '#117a65', fontSize: '13px', fontWeight: 'bold' }}>
+                🎒 Ticket includes a personal backpack for free!
+              </div>
+
+              {/* בחירת סוג מזוודה נוספת */}
+              <div style={{ margin: '15px 0', padding: '12px', background: '#f8f9fa', borderRadius: '5px', border: '1px solid #e9ecef' }}>
+                <p style={{ margin: '0 0 8px 0', fontSize: '14px', fontWeight: 'bold' }}>Select Extra Luggage:</p>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '13px' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: '8px' }}>
+                    <input 
+                      type="radio" 
+                      name="luggage" 
+                      checked={luggageType === 'none'} 
+                      onChange={() => setLuggageType('none')}
+                    />
+                    <span>No extra luggage</span>
+                  </label>
+
+                  <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: '8px' }}>
+                    <input 
+                      type="radio" 
+                      name="luggage" 
+                      checked={luggageType === 'trolley10'} 
+                      onChange={() => setLuggageType('trolley10')}
+                    />
+                    <span>Trolley 10 kg (+${TROLLEY_PRICE})</span>
+                  </label>
+
+                  <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: '8px' }}>
+                    <input 
+                      type="radio" 
+                      name="luggage" 
+                      checked={luggageType === 'baggage23'} 
+                      onChange={() => setLuggageType('baggage23')}
+                    />
+                    <span>Baggage 23 kg (+${BAGGAGE_PRICE})</span>
+                  </label>
+                </div>
+              </div>
+
+              <p className="price" style={{ fontSize: '24px', fontWeight: 'bold', color: '#e74c3c', marginTop: '10px' }}>
+                Total: {finalPrice}{currencySymbol}
+              </p>
+            </div>
             
-            {/* כפתור מועדפים */}
-            <button onClick={addToFavorites} style={{ background: '#e67e22', color: 'white', padding: '10px 20px', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
-              Add to Favorites ❤️
-            </button>
+            <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+              {/* כפתור עגלה */}
+              <button onClick={addToCart} style={{ background: '#3498db', color: 'white', padding: '10px 15px', border: 'none', borderRadius: '5px', cursor: 'pointer', flex: 1 }}>
+                Add to Cart 🛒
+              </button>
+              
+              {/* כפתור מועדפים */}
+              <button onClick={addToFavorites} style={{ background: '#e67e22', color: 'white', padding: '10px 15px', border: 'none', borderRadius: '5px', cursor: 'pointer', flex: 1 }}>
+                Favorites ❤️
+              </button>
+            </div>
           </div>
+
         </div>
       </div>
       
