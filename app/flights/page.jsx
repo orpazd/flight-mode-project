@@ -46,7 +46,7 @@ function FlightsList() {
             className="flight-card"
             style={{ 
               display: 'flex',
-              flexDirection: 'row-reverse',
+              flexDirection: 'row', // תמונה מימין, טקסט משמאל
               height: '200px',
               border: '1px solid #ccc',
               borderRadius: '10px',
@@ -56,7 +56,7 @@ function FlightsList() {
               backgroundColor: 'white'
             }}
           >
-            {/* צד תמונה (שמאל) */}
+            {/* צד תמונה (ימין) */}
             <div 
               style={{
                 flex: '1',
@@ -66,15 +66,15 @@ function FlightsList() {
               }}
             />
 
-            {/* צד טקסט (ימין) */}
+            {/* צד טקסט (שמאל) */}
             <div style={{ flex: '1', padding: '15px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
               <div>
                 <h1 style={{ fontSize: '1.1rem', margin: '0 0 5px 0' }}>{flight.to || flight.destination || "יעד לא צוין"}</h1>
-                {/* כאן תוקן הקישור לכל האיותים האפשריים של חברת התעופה */}
                 <p style={{ margin: '2px 0', fontSize: '0.8rem' }}>
                   חברת תעופה: {flight.airline || flight.Airline || flight.company || flight.flightCompany || "לא צוין"}
                 </p>
                 <p style={{ margin: '2px 0', fontSize: '0.8rem' }}>תאריך: {flight.Dates || flight.date || "לא צוין"}</p>
+                <p style={{ margin: '2px 0', fontSize: '0.8rem' }}>שעות: {flight.time || "לא צוין"}</p>
               </div>
               <p style={{ fontWeight: 'bold', fontSize: '1rem', margin: '0' }}>{flight.price || "צור קשר"}</p>
             </div>
