@@ -11,7 +11,10 @@ export default function FlightPage() {
   const { id } = useParams();
   const [flight, setFlight] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [luggageType, setLuggageType] = useState('none'); // 'none', 'trolley10', 'baggage23'
+  
+  // שימוש ב-state של בוליאנים עבור כל סוג כבודה
+  const [hasTrolley, setHasTrolley] = useState(false);
+  const [hasBaggage, setHasBaggage] = useState(false);
 
   // עלויות נוספות לכבודה
   const TROLLEY_PRICE = 30; // מחיר טרולי 10 קילו
@@ -35,19 +38,21 @@ export default function FlightPage() {
   if (loading) return <div style={{textAlign: 'center', marginTop: '50px'}}>Loading flight...</div>;
   if (!flight) return <div style={{textAlign: 'center', marginTop: '50px'}}>Flight not found!</div>;
 
-  // חישוב מחיר בסיס והוספת תשלום לפי סוג הכבודה שנבחר
+  // חישוב מחיר בסיס ותוספות לפי מה שנבחר
   const numericPrice = parseFloat(flight.price.replace(/[^0-9.]/g, '')) || 0;
   let luggageExtraCost = 0;
-  let luggageDescription = 'No extra luggage';
+  let selectedLuggageList = [];
 
-  if (luggageType === 'trolley10') {
-    luggageExtraCost = TROLLEY_PRICE;
-    luggageDescription = 'Trolley 10 kg';
-  } else if (luggageType === 'baggage23') {
-    luggageExtraCost = BAGGAGE_PRICE;
-    luggageDescription = 'Baggage 23 kg';
+  if (hasTrolley) {
+    luggageExtraCost += TROLLEY_PRICE;
+    selectedLuggageList.push('Trolley 10 kg');
+  }
+  if (hasBaggage) {
+    luggageExtraCost += BAGGAGE_PRICE;
+    selectedLuggageList.push('Baggage 23 kg');
   }
 
+  const luggageDescription = selectedLuggageList.length > 0 ? selectedLuggageList.join(', ') : 'No extra luggage';
   const finalPrice = numericPrice + luggageExtraCost;
   const currencySymbol = flight.price.includes('$') ? '$' : '';
 
@@ -120,37 +125,25 @@ export default function FlightPage() {
                 🎒 Ticket includes a personal backpack for free!
               </div>
 
-              {/* בחירת סוג מזוודה נוספת */}
+              {/* בחירת שירותי כבודה נוספים (באמצעות Checkboxes) */}
               <div style={{ margin: '15px 0', padding: '12px', background: '#f8f9fa', borderRadius: '5px', border: '1px solid #e9ecef' }}>
-                <p style={{ margin: '0 0 8px 0', fontSize: '14px', fontWeight: 'bold' }}>Select Extra Luggage:</p>
+                <p style={{ margin: '0 0 8px 0', fontSize: '14px', fontWeight: 'bold' }}>Select Extra Luggage (You can choose both):</p>
                 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '13px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px' }}>
                   <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: '8px' }}>
                     <input 
-                      type="radio" 
-                      name="luggage" 
-                      checked={luggageType === 'none'} 
-                      onChange={() => setLuggageType('none')}
-                    />
-                    <span>No extra luggage</span>
-                  </label>
-
-                  <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: '8px' }}>
-                    <input 
-                      type="radio" 
-                      name="luggage" 
-                      checked={luggageType === 'trolley10'} 
-                      onChange={() => setLuggageType('trolley10')}
+                      type="checkbox" 
+                      checked={hasTrolley} 
+                      onChange={(e) => setHasTrolley(e.target.checked)}
                     />
                     <span>Trolley 10 kg (+${TROLLEY_PRICE})</span>
                   </label>
 
                   <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: '8px' }}>
                     <input 
-                      type="radio" 
-                      name="luggage" 
-                      checked={luggageType === 'baggage23'} 
-                      onChange={() => setLuggageType('baggage23')}
+                      type="checkbox" 
+                      checked={hasBaggage} 
+                      onChange={(e) => setHasBaggage(e.target.checked)}
                     />
                     <span>Baggage 23 kg (+${BAGGAGE_PRICE})</span>
                   </label>
