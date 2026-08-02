@@ -38,10 +38,11 @@ export async function POST(request) {
       airline: data.airline || data.Airline || "לא צוין",
       Airline: data.airline || data.Airline || "לא צוין",
       departureDate: data.departureDate || "",
+      departureTime: data.departureTime || "", // <-- הוספנו את שעת הלוך
       returnDate: data.returnDate || "",
+      returnTime: data.returnTime || "",       // <-- הוספנו את שעת חזור
       date: finalDate || "לא צוין",
       Dates: finalDate || "לא צוין",
-      time: data.time || data.time2 || "לא צוין",
       price: data.price || "צור קשר",
       image: data.image || "",
       category: data.category || "flights"
@@ -52,4 +53,4 @@ export async function POST(request) {
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-} 
+}

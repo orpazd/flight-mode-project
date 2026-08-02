@@ -26,7 +26,7 @@ export async function PUT(request, { params }) {
 export async function DELETE(request, { params }) {
   try {
     await dbConnect();
-    const { id } = params;
+    const { id } = await params;
 
     // מנסה למחוק לפי _id של מונגוז, ואם לא מצליח מנסה לחפש לפי id רגיל
     let deletedFlight = await Flight.findByIdAndDelete(id);
