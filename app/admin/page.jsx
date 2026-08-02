@@ -11,7 +11,8 @@ export default function AdminPage() {
     returnDate: '',
     returnTime: '',
     airline: '',
-    image: ''
+    image: '',
+    category: 'flights' // ברירת מחדל לקטגוריה
   });
 
   const [flights, setFlights] = useState([]);
@@ -49,7 +50,7 @@ export default function AdminPage() {
     const flightId = flight._id || flight.id;
     setEditingId(flightId);
 
-    // שליפה נכונה של תאריכים (תמיכה גם בפיצול מחרוזת תאריכים ישנה אם קיימת)
+    // שליפה נכונה של תאריכים
     let depDate = flight.departureDate || '';
     let retDate = flight.returnDate || '';
     const rawDate = flight.date || flight.Dates || '';
@@ -62,7 +63,7 @@ export default function AdminPage() {
       depDate = rawDate.trim();
     }
 
-    // שליפה נכונה של שעות (תמיכה בשדות חדשים או בשדה time ישן ומאוחד)
+    // שליפה נכונה של שעות
     let depTime = flight.departureTime || '';
     let retTime = flight.returnTime || '';
     const rawTime = flight.time || '';
@@ -77,6 +78,12 @@ export default function AdminPage() {
 
     const extractedAirline = flight.airline || flight.Airline || flight.company || flight.flightCompany || "";
 
+    // זיהוי קטגוריה קיימת
+    let flightCategory = flight.category || 'flights';
+    if (flight.sale === true || flight.sale === "yes" || flight.sale === "sale") {
+      flightCategory = 'sale';
+    }
+
     setFormData({
       destination: flight.destination || flight.to || '',
       price: flight.price || '',
@@ -85,7 +92,8 @@ export default function AdminPage() {
       returnDate: retDate,
       returnTime: retTime,
       airline: extractedAirline,
-      image: flight.image || ''
+      image: flight.image || '',
+      category: flightCategory
     });
     
     setImagePreview(flight.image || '');
@@ -93,7 +101,7 @@ export default function AdminPage() {
   };
   
   const handleCancel = () => {
-    setFormData({ destination: '', price: '', departureDate: '', departureTime: '', returnDate: '', returnTime: '', airline: '', image: '' });
+    setFormData({ destination: '', price: '', departureDate: '', departureTime: '', returnDate: '', returnTime: '', airline: '', image: '', category: 'flights' });
     setImagePreview('');
     setEditingId(null);
   };
@@ -125,7 +133,6 @@ export default function AdminPage() {
     e.preventDefault();
     setLoading(true);
 
-    // שומרים רק את התאריכים נקיים בשדה date/Dates
     const fullDateString = (formData.departureDate && formData.returnDate) 
       ? `${formData.departureDate} - ${formData.returnDate}` 
       : (formData.departureDate || formData.returnDate || "לא צוין");
@@ -142,7 +149,9 @@ export default function AdminPage() {
       returnTime: formData.returnTime,
       date: fullDateString,
       Dates: fullDateString,
-      image: formData.image
+      image: formData.image,
+      category: formData.category,
+      sale: formData.category === 'sale'
     };
 
     const url = editingId ? `/api/flights/${editingId}` : '/api/flights';
@@ -164,7 +173,7 @@ export default function AdminPage() {
       }
 
       alert(editingId ? "הטיסה עודכנה בהצלחה!" : "הטיסה נוספה בהצלחה!");
-      setFormData({ destination: '', price: '', departureDate: '', departureTime: '', returnDate: '', returnTime: '', airline: '', image: '' });
+      setFormData({ destination: '', price: '', departureDate: '', departureTime: '', returnDate: '', returnTime: '', airline: '', image: '', category: 'flights' });
       setImagePreview('');
       setEditingId(null);
       fetchFlights();
@@ -209,6 +218,19 @@ export default function AdminPage() {
             required 
             style={{ padding: '10px', fontSize: '16px' }}
           />
+
+          {/* בחירת קטגוריה */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+            <label style={{ fontSize: '14px', color: '#555', fontWeight: 'bold' }}>קטגוריית טיסה:</label>
+            <select 
+              value={formData.category} 
+              onChange={(e) => setFormData({...formData, category: e.target.value})}
+              style={{ padding: '10px', fontSize: '16px', background: 'white', cursor: 'pointer', borderRadius: '4px', border: '1px solid #ccc' }}
+            >
+              <option value="flights">טיסות רגילות (Flights)</option>
+              <option value="sale">דקה 90 / מבצע (Sale)</option>
+            </select>
+          </div>
 
           {/* שורת תאריך ושעת הלוך */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
@@ -315,6 +337,8 @@ export default function AdminPage() {
                 ? `${flight.departureTime} - ${flight.returnTime}` 
                 : (flight.departureTime || flight.returnTime);
 
+              const isSale = flight.sale === true || flight.category === "sale" || flight.sale === "yes";
+
               return (
                 <div 
                   key={flightId} 
@@ -336,6 +360,16 @@ export default function AdminPage() {
                     <div>
                       <strong style={{ fontSize: '18px' }}>{flight.destination || flight.to}</strong> 
                       <span style={{ color: '#555', marginRight: '10px' }}>({flight.airline || flight.Airline})</span>
+                      <span style={{ 
+                        marginRight: '10px', 
+                        padding: '2px 6px', 
+                        fontSize: '12px', 
+                        borderRadius: '4px', 
+                        background: isSale ? '#f39c12' : '#3498db', 
+                        color: 'white' 
+                      }}>
+                        {isSale ? 'סייל / דקה 90' : 'טיסה רגילה'}
+                      </span>
                       <div style={{ color: '#e74c3c', fontWeight: 'bold', marginTop: '4px' }}>
                         {flight.price} {dateToShow ? `| תאריך: ${dateToShow}` : ''}
                       </div>
