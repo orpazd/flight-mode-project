@@ -12,7 +12,7 @@ export default function AdminPage() {
     returnTime: '',
     airline: '',
     image: '',
-    category: 'flights' // ברירת מחדל לקטגוריה
+    category: 'flights'
   });
 
   const [flights, setFlights] = useState([]);
@@ -46,22 +46,57 @@ export default function AdminPage() {
     }
   };
 
+  // פונקציית עזר להמרת כל פורמט תאריך לפורמט YYYY-MM-DD שתומך ב-HTML date input
+  const formatDateForInput = (dateStr) => {
+    if (!dateStr) return '';
+    
+    // אם התאריך כבר בפורמט הנכון YYYY-MM-DD
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
+
+    // ניסיון לטפל בפורמט ישראלי DD/MM/YYYY או DD.MM.YYYY
+    const cleanStr = dateStr.trim();
+    let parts = [];
+    if (cleanStr.includes('/')) {
+      parts = cleanStr.split('/');
+    } else if (cleanStr.includes('.')) {
+      parts = cleanStr.split('.');
+    }
+
+    if (parts.length === 3) {
+      // אם החלק הראשון הוא השנה (למקרה הפוך)
+      if (parts[0].length === 4) {
+        return `${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}`;
+      }
+      // פורמט רגיל: יום, חודש, שנה -> שנה, חודש, יום
+      const [day, month, year] = parts;
+      if (year && month && day) {
+        return `${year.padStart(4, '2')}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+      }
+    }
+
+    return '';
+  };
+
   const handleEditClick = (flight) => {
     const flightId = flight._id || flight.id;
     setEditingId(flightId);
 
-    // שליפה נכונה של תאריכים
-    let depDate = flight.departureDate || '';
-    let retDate = flight.returnDate || '';
+    // חילוץ תאריך הלוך ותאריך חזור מכל שדה אפשרי במסד
+    let depDateRaw = flight.departureDate || '';
+    let retDateRaw = flight.returnDate || '';
     const rawDate = flight.date || flight.Dates || '';
     
-    if ((!depDate || !retDate) && rawDate.includes(' - ')) {
+    if ((!depDateRaw || !retDateRaw) && rawDate.includes(' - ')) {
       const parts = rawDate.split(' - ');
-      depDate = parts[0]?.trim() || '';
-      retDate = parts[1]?.trim() || '';
-    } else if (!depDate) {
-      depDate = rawDate.trim();
+      depDateRaw = parts[0]?.trim() || '';
+      retDateRaw = parts[1]?.trim() || '';
+    } else if (!depDateRaw) {
+      depDateRaw = rawDate.trim();
     }
+
+    // המרה לפורמט ששדה ה-HTML מבין (YYYY-MM-DD)
+    const depDate = formatDateForInput(depDateRaw);
+    const retDate = formatDateForInput(retDateRaw);
 
     // שליפה נכונה של שעות
     let depTime = flight.departureTime || '';
@@ -106,7 +141,6 @@ export default function AdminPage() {
     setEditingId(null);
   };
 
-  // מחיקת טיסה
   const handleDelete = async (flightId) => {
     if (!confirm("האם את בטוחה שברצונך למחוק טיסה זו?")) return;
 
