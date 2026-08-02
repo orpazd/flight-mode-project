@@ -49,16 +49,30 @@ export default function AdminPage() {
     const flightId = flight._id || flight.id;
     setEditingId(flightId);
 
-    let dep = flight.departureDate || '';
-    let ret = flight.returnDate || '';
+    // שליפה נכונה של תאריכים (תמיכה גם בפיצול מחרוזת תאריכים ישנה אם קיימת)
+    let depDate = flight.departureDate || '';
+    let retDate = flight.returnDate || '';
     const rawDate = flight.date || flight.Dates || '';
     
-    if ((!dep || !ret) && rawDate.includes(' - ')) {
+    if ((!depDate || !retDate) && rawDate.includes(' - ')) {
       const parts = rawDate.split(' - ');
-      dep = parts[0] || '';
-      ret = parts[1] || '';
-    } else if (!dep) {
-      dep = rawDate;
+      depDate = parts[0]?.trim() || '';
+      retDate = parts[1]?.trim() || '';
+    } else if (!depDate) {
+      depDate = rawDate.trim();
+    }
+
+    // שליפה נכונה של שעות (תמיכה בשדות חדשים או בשדה time ישן ומאוחד)
+    let depTime = flight.departureTime || '';
+    let retTime = flight.returnTime || '';
+    const rawTime = flight.time || '';
+
+    if ((!depTime || !retTime) && rawTime.includes(' - ')) {
+      const timeParts = rawTime.split(' - ');
+      depTime = timeParts[0]?.trim() || '';
+      retTime = timeParts[1]?.trim() || '';
+    } else if (!depTime && rawTime && rawTime !== 'לא צוין') {
+      depTime = rawTime.trim();
     }
 
     const extractedAirline = flight.airline || flight.Airline || flight.company || flight.flightCompany || "";
@@ -66,13 +80,14 @@ export default function AdminPage() {
     setFormData({
       destination: flight.destination || flight.to || '',
       price: flight.price || '',
-      departureDate: dep,
-      departureTime: flight.departureTime || '',
-      returnDate: ret,
-      returnTime: flight.returnTime || '',
+      departureDate: depDate,
+      departureTime: depTime,
+      returnDate: retDate,
+      returnTime: retTime,
       airline: extractedAirline,
       image: flight.image || ''
     });
+    
     setImagePreview(flight.image || '');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
