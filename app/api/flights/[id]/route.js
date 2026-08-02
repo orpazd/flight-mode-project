@@ -6,9 +6,10 @@ import Flight from '@/app/models/Flight';
 export async function PUT(request, { params }) {
   try {
     await dbConnect();
-    const { id } = params;
+    const { id } = await params;
     const data = await request.json();
-
+    console.log("data =", data);
+    
     const updatedFlight = await Flight.findByIdAndUpdate(id, data, { new: true });
 
     if (!updatedFlight) {
