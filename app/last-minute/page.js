@@ -54,7 +54,7 @@ export default function LastMinutePage() {
                 className="flight-card"
                 style={{ 
                   display: 'flex',
-                  flexDirection: 'row-reverse',
+                  flexDirection: 'row', // סדר רגיל שבו הראשון בקוד מופיע מימין בעברית
                   height: '200px',
                   border: '1px solid #ccc',
                   borderRadius: '10px',
@@ -64,7 +64,7 @@ export default function LastMinutePage() {
                   backgroundColor: 'white'
                 }}
               >
-                {/* צד תמונה (שמאל) */}
+                {/* צד תמונה (מופיע ראשון בקוד ולכן יהיה מימין) */}
                 <div 
                   style={{
                     flex: '1',
@@ -74,7 +74,7 @@ export default function LastMinutePage() {
                   }}
                 />
 
-                {/* צד טקסט (ימין) */}
+                {/* צד טקסט (מופיע שני בקוד ולכן יהיה משמאל) */}
                 <div style={{ flex: '1', padding: '15px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                   <div>
                     <h2 style={{ fontSize: '1.1rem', margin: '0 0 5px 0' }}>{flight.to || flight.destination || "יעד לא צוין"}</h2>
