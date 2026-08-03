@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 
 export default function AdminPage() {
+  // סטייט ראשי לטופס – מאפס את כל השדות לערכים ריקים או ברירת מחדל
   const [formData, setFormData] = useState({
     destination: '',
     price: '',
@@ -16,14 +17,16 @@ export default function AdminPage() {
   });
 
   const [flights, setFlights] = useState([]);
-  const [editingId, setEditingId] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [imagePreview, setImagePreview] = useState('');
+  const [editingId, setEditingId] = useState(null); // שומר את ה-ID של הטיסה הנוכחית בעריכה (אם אין, אז null)
+  const [loading, setLoading] = useState(false); // טעינה בזמן שליחת הטופס
+  const [imagePreview, setImagePreview] = useState(''); // תצוגה מקדימה לתמונה שנבחרה
 
+  // טעינת הטיסות ברגע שהקומפוננטה עולה
   useEffect(() => {
     fetchFlights();
   }, []);
 
+  // שליפת כל הטיסות מה-API
   const fetchFlights = async () => {
     try {
       const res = await fetch('/api/flights');
@@ -34,6 +37,7 @@ export default function AdminPage() {
     }
   };
 
+  // טיפול בהעלאת תמונה והמרתה ל-Base64 כדי להציג ולשמור בקלות
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -63,7 +67,7 @@ export default function AdminPage() {
     }
 
     if (parts.length === 3) {
-      // אם החלק הראשון הוא השנה (למקרה הפוך)
+      // אם החלק הראשון هو השנה (למקרה הפוך)
       if (parts[0].length === 4) {
         return `${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}`;
       }
@@ -77,6 +81,7 @@ export default function AdminPage() {
     return '';
   };
 
+  // לחיצה על כפתור "ערוך" – ממלא את הטופס בנתונים של הטיסה הנבחרת
   const handleEditClick = (flight) => {
     const flightId = flight._id || flight.id;
     setEditingId(flightId);
@@ -132,15 +137,17 @@ export default function AdminPage() {
     });
     
     setImagePreview(flight.image || '');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'smooth' }); // גלילה חלקה למעלה לראות את הטופס
   };
   
+  // איפוס הטופס ויציאה ממצב עריכה
   const handleCancel = () => {
     setFormData({ destination: '', price: '', departureDate: '', departureTime: '', returnDate: '', returnTime: '', airline: '', image: '', category: 'flights' });
     setImagePreview('');
     setEditingId(null);
   };
 
+  // מחיקת טיסה מהמערכת לפי ID
   const handleDelete = async (flightId) => {
     if (!confirm("האם את בטוחה שברצונך למחוק טיסה זו?")) return;
 
@@ -156,21 +163,24 @@ export default function AdminPage() {
       }
 
       alert("הטיסה נמחקה בהצלחה!");
-      fetchFlights();
+      fetchFlights(); // רענון הרשימה אחרי מחיקה
     } catch (err) {
       console.error("Delete error:", err);
       alert("שגיאת רשת בעת מחיקת הטיסה");
     }
   };
 
+  // שליחת הטופס – יצירת טיסה חדשה או עדכון קיימת
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
+    // מחבר את התאריכים למחרוזת אחת בשביל תאימות למבנה הישן בבסיס הנתונים
     const fullDateString = (formData.departureDate && formData.returnDate) 
       ? `${formData.departureDate} - ${formData.returnDate}` 
       : (formData.departureDate || formData.returnDate || "לא צוין");
     
+    // בונה את האובייקט לשליחה לשרת (כולל גיבוי לשמות שדות שונים שהיו בשימוש פעם)
     const payload = {
       destination: formData.destination,
       to: formData.destination,
@@ -210,7 +220,7 @@ export default function AdminPage() {
       setFormData({ destination: '', price: '', departureDate: '', departureTime: '', returnDate: '', returnTime: '', airline: '', image: '', category: 'flights' });
       setImagePreview('');
       setEditingId(null);
-      fetchFlights();
+      fetchFlights(); // רענון רשימת הטיסות
     } catch (err) {
       alert("שגיאת רשת, נא לבדוק את השרת");
     } finally {
@@ -227,6 +237,7 @@ export default function AdminPage() {
           {editingId ? 'עריכת טיסה קיימת' : 'הוספת טיסה חדשה'}
         </h1>
         
+        {/* טופס הוספה/עריכה של טיסות */}
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px', background: '#f9f9f9', padding: '20px', borderRadius: '8px', border: '1px solid #ddd' }}>
           <input 
             placeholder="יעד" 
@@ -312,6 +323,7 @@ export default function AdminPage() {
             </div>
           </div>
 
+          {/* העלאת תמונה ותצוגה מקדימה */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
             <label style={{ fontSize: '14px', color: '#555', fontWeight: 'bold' }}>העלאת תמונה מהמחשב:</label>
             <input 
@@ -327,6 +339,7 @@ export default function AdminPage() {
             )}
           </div>
 
+          {/* כפתור שמירה / עדכון */}
           <button 
             type="submit" 
             disabled={loading}
@@ -344,6 +357,7 @@ export default function AdminPage() {
             {loading ? 'שומר...' : (editingId ? 'עדכן טיסה' : 'הוסף טיסה')}
           </button>
 
+          {/* כפתור ביטול עריכה (מופיע רק כשעורכים טיסה קיימת) */}
           {editingId && (
             <button 
               type="button" 
@@ -357,6 +371,7 @@ export default function AdminPage() {
 
         <hr style={{ margin: '40px 0', borderColor: '#ddd' }} />
 
+        {/* רשימת הטיסות הקיימות לניהול */}
         <h2>ניהול טיסות קיימות ({flights.length})</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '15px' }}>
           {flights.length === 0 ? (
@@ -415,6 +430,7 @@ export default function AdminPage() {
                     </div>
                   </div>
                   
+                  {/* כפתורי פעולות על הטיסה (עריכה ומחיקה) */}
                   <div style={{ display: 'flex', gap: '8px' }}>
                     <button 
                       type="button"
